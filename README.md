@@ -1,4 +1,4 @@
-# Izanagi
+# MMD Tools
 
 ## Description
 
