@@ -7,9 +7,9 @@ import imgui.ImGui;
 public class Main {
     public static void main(String[] args) {
         ApplicationSpecification spec = new ApplicationSpecification();
-        spec.name = "Izanagi Example";
+        spec.name = "MMD Tools";
         Application app = new Application(spec);
-        app.pushLayer(new ExampleLayer());
+        app.pushLayer(new AppLayer());
 
         app.setMenuBarCallback(() -> {
             if (ImGui.beginMenu("File")) {
