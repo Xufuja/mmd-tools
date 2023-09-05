@@ -30,7 +30,7 @@ public class AppLayer implements Layer {
         int tab_bar_flags = ImGuiTabBarFlags.None;
         if (ImGui.beginTabBar("MyTabBar", tab_bar_flags)) {
             if (ImGui.beginTabItem("Avocado")) {
-                if (ImGui.beginListBox("listbox 1")) {
+                if (ImGui.beginListBox("##listbox 1")) {
                     for (int n = 0; n < items.length; n++) {
                         boolean is_selected = (item_current_idx == n);
                         if (ImGui.selectable(items[n], is_selected)) {
@@ -42,6 +42,14 @@ public class AppLayer implements Layer {
                             ImGui.setItemDefaultFocus();
                     }
                     ImGui.endListBox();
+
+                    ImGui.sameLine();
+
+                    ImGui.button("Yes");
+                    ImGui.sameLine();
+                    ImGui.button("No");
+                    ImGui.sameLine();
+                    ImGui.button("Maybe");
                 }
                 ImGui.endTabItem();
             }
@@ -53,7 +61,7 @@ public class AppLayer implements Layer {
             }
             if (ImGui.beginTabItem("Cucumber")) {
                 String combo_preview_value = items[item_current_idx];  // Pass in the preview value visible before opening the combo (it could be anything)
-                if (ImGui.beginCombo("combo 1", combo_preview_value, 0)) {
+                if (ImGui.beginCombo("##combo 1", combo_preview_value, 0)) {
                     for (int n = 0; n < items.length; n++) {
                         boolean is_selected = (item_current_idx == n);
                         if (ImGui.selectable(items[n], is_selected)) {
@@ -65,6 +73,19 @@ public class AppLayer implements Layer {
                     }
                     ImGui.endCombo();
                 }
+                ImGui.separator();
+                ImGui.beginGroup();
+                ImGui.button("AAA");
+                ImGui.sameLine();
+                ImGui.button("BBB");
+                ImGui.sameLine();
+                ImGui.beginGroup();
+                ImGui.button("CCC");
+                ImGui.button("DDD");
+                ImGui.endGroup();
+                ImGui.sameLine();
+                ImGui.button("EEE");
+                ImGui.endGroup();
                 ImGui.endTabItem();
             }
             ImGui.endTabBar();
