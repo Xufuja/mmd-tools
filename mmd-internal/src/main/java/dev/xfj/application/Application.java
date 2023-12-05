@@ -2,6 +2,10 @@ package dev.xfj.application;
 
 import dev.xfj.Layer;
 import dev.xfj.LayerStack;
+import dev.xfj.events.Event;
+import dev.xfj.events.EventDispatcher;
+import dev.xfj.events.application.WindowCloseEvent;
+import dev.xfj.events.application.WindowResizeEvent;
 import imgui.*;
 import imgui.flag.*;
 import imgui.gl3.ImGuiImplGl3;
@@ -9,7 +13,12 @@ import imgui.glfw.ImGuiImplGlfw;
 import imgui.type.ImBoolean;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWWindowCloseCallback;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL45;
+
+import java.util.ListIterator;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -21,16 +30,19 @@ public class Application {
     private ApplicationSpecification specification;
     private long windowHandle;
     private boolean running;
+    private boolean minimized;
     private float timeStep;
     private float frameTime;
     private float lastFrameTime;
     private LayerStack layerStack;
+    private EventCallBack.EventCallbackFn eventCallback;
     private Runnable menuBarCallback;
     private final ImGuiImplGlfw imGuiGlfw;
     private final ImGuiImplGl3 imGuiGl3;
 
     public Application(ApplicationSpecification specification) {
         this.specification = specification;
+        this.minimized = false;
         this.timeStep = 0.0f;
         this.frameTime = 0.0f;
         this.lastFrameTime = 0.0f;
@@ -56,12 +68,32 @@ public class Application {
             });
         }
         windowHandle = glfwCreateWindow(specification.width, specification.height, specification.name, NULL, NULL);
+        eventCallback = this::onEvent;
 
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 4);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 5);
 
         glfwMakeContextCurrent(windowHandle);
         GL.createCapabilities();
+
+        glfwSetWindowSizeCallback(windowHandle, new GLFWWindowSizeCallback() {
+            @Override
+            public void invoke(long window, int width, int height) {
+                specification.width = width;
+                specification.height = height;
+
+                WindowResizeEvent event = new WindowResizeEvent(width, height);
+                eventCallback.handle(event);
+            }
+        });
+
+        glfwSetWindowCloseCallback(windowHandle, new GLFWWindowCloseCallback() {
+            @Override
+            public void invoke(long window) {
+                WindowCloseEvent event = new WindowCloseEvent();
+                eventCallback.handle(event);
+            }
+        });
 
         ImGui.createContext();
         final ImGuiIO io = ImGui.getIO();
@@ -167,6 +199,23 @@ public class Application {
         }
     }
 
+    public void onEvent(Event event) {
+        EventDispatcher eventDispatcher = new EventDispatcher(event);
+        eventDispatcher.dispatch(WindowCloseEvent.class, this::onWindowClose);
+        eventDispatcher.dispatch(WindowResizeEvent.class, this::onWindowResize);
+
+        /*ListIterator<Layer> it = layerStack.getLayers().listIterator(layerStack.getLayers().size());
+        while (it.hasPrevious()) {
+            Layer layer = it.previous();
+
+            if (event.isHandled()) {
+                break;
+            }
+
+            layer.onEvent(event);
+        }*/
+    }
+
     public void pushLayer(Layer layer) {
         layerStack.pushLayer(layer);
     }
@@ -193,6 +242,22 @@ public class Application {
 
     private void close() {
         this.running = false;
+    }
+
+    private boolean onWindowClose(WindowCloseEvent windowCloseEvent) {
+        close();
+        return true;
+    }
+
+    private boolean onWindowResize(WindowResizeEvent windowResizeEvent) {
+        if (windowResizeEvent.getWidth() == 0 || windowResizeEvent.getHeight() == 0) {
+            minimized = true;
+            return false;
+        }
+
+        minimized = false;
+        GL45.glViewport(0, 0, windowResizeEvent.getWidth(), windowResizeEvent.getHeight());
+        return false;
     }
 
     public long getWindowHandle() {
