@@ -1,78 +1,226 @@
 package dev.xfj;
 
 import imgui.ImGui;
-import imgui.flag.ImGuiInputTextFlags;
-import imgui.flag.ImGuiTabBarFlags;
+import imgui.flag.*;
 import imgui.type.ImString;
 
 public class AppLayer implements Layer {
-    private static int item_current_idx = 0;
+    private int encodingIndex = 0;
+    private int uvIndex = 0;
 
     @Override
     public void onAttach() {
-        System.out.println("Not implemented!");
+
     }
 
     @Override
     public void onDetach() {
-        System.out.println("Not implemented!");
+
     }
 
     @Override
     public void onUpdate(float ts) {
-        System.out.println("Not implemented!");
+
     }
 
     @Override
     public void onUIRender() {
-        String[] items = new String[]{"AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO"};
 
         int tab_bar_flags = ImGuiTabBarFlags.None;
-        if (ImGui.beginTabBar("MyTabBar", tab_bar_flags)) {
-            if (ImGui.beginTabItem("Avocado")) {
-                if (ImGui.beginListBox("##listbox 1")) {
-                    for (int n = 0; n < items.length; n++) {
-                        boolean is_selected = (item_current_idx == n);
-                        if (ImGui.selectable(items[n], is_selected)) {
-                            item_current_idx = n;
+        if (ImGui.beginTabBar("##tabbar", tab_bar_flags)) {
+            if (ImGui.beginTabItem("Info")) {
+                ImGui.text("System");
+                ImGui.separator();
+
+                int tableFlags = ImGuiTableFlags.None;
+
+                if (ImGui.beginTable("##table1", 6, tableFlags)) {
+                    ImGui.tableNextRow();
+                    ImGui.tableSetColumnIndex(0);
+                    ImGui.text("PMX Version");
+                    ImGui.tableSetColumnIndex(1);
+                    ImGui.text("v");
+                    ImGui.tableSetColumnIndex(2);
+                    ImGui.text("Encoding");
+                    ImGui.tableSetColumnIndex(3);
+
+                    String[] encodingItems = {"UTF16", "UTF8"};
+
+                    if (ImGui.beginCombo("##combo 1", encodingItems[encodingIndex], ImGuiComboFlags.None)) {
+                        for (int n = 0; n < encodingItems.length; n++) {
+                            boolean isSelected = (encodingIndex == n);
+                            
+                            if (ImGui.selectable(encodingItems[n], isSelected)) {
+                                encodingIndex = n;
+                            }
+
+                            if (isSelected) {
+                                ImGui.setItemDefaultFocus();
+                            }
                         }
-
-                        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                        if (is_selected)
-                            ImGui.setItemDefaultFocus();
+                        ImGui.endCombo();
                     }
-                    ImGui.endListBox();
 
-                    ImGui.sameLine();
+                    ImGui.tableSetColumnIndex(4);
+                    ImGui.text("UV Number");
+                    ImGui.tableSetColumnIndex(5);
 
-                    ImGui.button("Yes");
+                    String[] uvItems = {"1", "2", "3", "4"};
+
+                    if (ImGui.beginCombo("##combo 2", uvItems[uvIndex], ImGuiComboFlags.None)) {
+                        for (int n = 0; n < uvItems.length; n++) {
+                            boolean isSelected = (uvIndex == n);
+
+                            if (ImGui.selectable(uvItems[n], isSelected)) {
+                                uvIndex = n;
+                            }
+
+                            if (isSelected) {
+                                ImGui.setItemDefaultFocus();
+                            }
+                        }
+                        ImGui.endCombo();
+                    }
+                    ImGui.endTable();
+                }
+
+                ImGui.text("Model");
+                ImGui.separator();
+
+                if (ImGui.beginTable("##table2", 2, tableFlags)) {
+                    ImGui.tableNextRow();
+                    ImGui.tableSetColumnIndex(0);
+                    ImGui.text("Name");
+                    ImGui.tableSetColumnIndex(1);
+                    ImGui.inputText("##input1", new ImString(""));
                     ImGui.sameLine();
-                    ImGui.button("No");
+                    ImGui.button("JP");
                     ImGui.sameLine();
-                    ImGui.button("Maybe");
+                    ImGui.button("EN");
+                    ImGui.tableNextRow();
+                    ImGui.tableSetColumnIndex(0);
+                    ImGui.text("Comment");
+                    ImGui.tableSetColumnIndex(1);
+                    ImGui.inputTextMultiline("##input2", new ImString(""));
+
+                    ImGui.endTable();
                 }
                 ImGui.endTabItem();
             }
-            if (ImGui.beginTabItem("Broccoli")) {
+            if (ImGui.beginTabItem("Vertex")) {
                 ImGui.text("Header");
                 ImGui.separator();
                 ImGui.inputTextMultiline("##source", new ImString(), ImGuiInputTextFlags.AllowTabInput);
                 ImGui.endTabItem();
             }
-            if (ImGui.beginTabItem("Cucumber")) {
-                String combo_preview_value = items[item_current_idx];  // Pass in the preview value visible before opening the combo (it could be anything)
-                if (ImGui.beginCombo("##combo 1", combo_preview_value, 0)) {
-                    for (int n = 0; n < items.length; n++) {
-                        boolean is_selected = (item_current_idx == n);
-                        if (ImGui.selectable(items[n], is_selected)) {
-                            item_current_idx = n;
-                        }
-                        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                        if (is_selected)
-                            ImGui.setItemDefaultFocus();
-                    }
-                    ImGui.endCombo();
-                }
+            if (ImGui.beginTabItem("Faces")) {
+
+                ImGui.endTabItem();
+            }
+            if (ImGui.beginTabItem("Material")) {
+
+                ImGui.separator();
+                ImGui.beginGroup();
+                ImGui.button("AAA");
+                ImGui.sameLine();
+                ImGui.button("BBB");
+                ImGui.sameLine();
+                ImGui.beginGroup();
+                ImGui.button("CCC");
+                ImGui.button("DDD");
+                ImGui.endGroup();
+                ImGui.sameLine();
+                ImGui.button("EEE");
+                ImGui.endGroup();
+                ImGui.endTabItem();
+            }
+            if (ImGui.beginTabItem("Bone")) {
+
+                ImGui.separator();
+                ImGui.beginGroup();
+                ImGui.button("AAA");
+                ImGui.sameLine();
+                ImGui.button("BBB");
+                ImGui.sameLine();
+                ImGui.beginGroup();
+                ImGui.button("CCC");
+                ImGui.button("DDD");
+                ImGui.endGroup();
+                ImGui.sameLine();
+                ImGui.button("EEE");
+                ImGui.endGroup();
+                ImGui.endTabItem();
+            }
+            if (ImGui.beginTabItem("Morph")) {
+
+                ImGui.separator();
+                ImGui.beginGroup();
+                ImGui.button("AAA");
+                ImGui.sameLine();
+                ImGui.button("BBB");
+                ImGui.sameLine();
+                ImGui.beginGroup();
+                ImGui.button("CCC");
+                ImGui.button("DDD");
+                ImGui.endGroup();
+                ImGui.sameLine();
+                ImGui.button("EEE");
+                ImGui.endGroup();
+                ImGui.endTabItem();
+            }
+            if (ImGui.beginTabItem("Display")) {
+
+                ImGui.separator();
+                ImGui.beginGroup();
+                ImGui.button("AAA");
+                ImGui.sameLine();
+                ImGui.button("BBB");
+                ImGui.sameLine();
+                ImGui.beginGroup();
+                ImGui.button("CCC");
+                ImGui.button("DDD");
+                ImGui.endGroup();
+                ImGui.sameLine();
+                ImGui.button("EEE");
+                ImGui.endGroup();
+                ImGui.endTabItem();
+            }
+            if (ImGui.beginTabItem("Rigid Body")) {
+
+                ImGui.separator();
+                ImGui.beginGroup();
+                ImGui.button("AAA");
+                ImGui.sameLine();
+                ImGui.button("BBB");
+                ImGui.sameLine();
+                ImGui.beginGroup();
+                ImGui.button("CCC");
+                ImGui.button("DDD");
+                ImGui.endGroup();
+                ImGui.sameLine();
+                ImGui.button("EEE");
+                ImGui.endGroup();
+                ImGui.endTabItem();
+            }
+            if (ImGui.beginTabItem("Joint")) {
+
+                ImGui.separator();
+                ImGui.beginGroup();
+                ImGui.button("AAA");
+                ImGui.sameLine();
+                ImGui.button("BBB");
+                ImGui.sameLine();
+                ImGui.beginGroup();
+                ImGui.button("CCC");
+                ImGui.button("DDD");
+                ImGui.endGroup();
+                ImGui.sameLine();
+                ImGui.button("EEE");
+                ImGui.endGroup();
+                ImGui.endTabItem();
+            }
+            if (ImGui.beginTabItem("Soft Body")) {
+
                 ImGui.separator();
                 ImGui.beginGroup();
                 ImGui.button("AAA");
@@ -90,7 +238,6 @@ public class AppLayer implements Layer {
             }
             ImGui.endTabBar();
         }
-        ImGui.text("Selected: " + items[item_current_idx]);
 
     }
 }
