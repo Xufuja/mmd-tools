@@ -110,69 +110,8 @@ public class AppLayer implements Layer {
                 }
                 ImGui.endTabItem();
             }
-            if (ImGui.beginTabItem("Vertex")) {
-                ImGui.text("Header");
-                ImGui.separator();
-                ImGui.inputTextMultiline("##source", new ImString(), ImGuiInputTextFlags.AllowTabInput);
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Faces")) {
-
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Material")) {
-
-                ImGui.separator();
-                ImGui.beginGroup();
-                ImGui.button("AAA");
-                ImGui.sameLine();
-                ImGui.button("BBB");
-                ImGui.sameLine();
-                ImGui.beginGroup();
-                ImGui.button("CCC");
-                ImGui.button("DDD");
-                ImGui.endGroup();
-                ImGui.sameLine();
-                ImGui.button("EEE");
-                ImGui.endGroup();
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Bone")) {
-
-                ImGui.separator();
-                ImGui.beginGroup();
-                ImGui.button("AAA");
-                ImGui.sameLine();
-                ImGui.button("BBB");
-                ImGui.sameLine();
-                ImGui.beginGroup();
-                ImGui.button("CCC");
-                ImGui.button("DDD");
-                ImGui.endGroup();
-                ImGui.sameLine();
-                ImGui.button("EEE");
-                ImGui.endGroup();
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Morph")) {
-
-                ImGui.separator();
-                ImGui.beginGroup();
-                ImGui.button("AAA");
-                ImGui.sameLine();
-                ImGui.button("BBB");
-                ImGui.sameLine();
-                ImGui.beginGroup();
-                ImGui.button("CCC");
-                ImGui.button("DDD");
-                ImGui.endGroup();
-                ImGui.sameLine();
-                ImGui.button("EEE");
-                ImGui.endGroup();
-                ImGui.endTabItem();
-            }
             if (ImGui.beginTabItem("Display")) {
-                if (ImGui.beginTable("##table1", 6, tableFlags)) {
+                if (ImGui.beginTable("##table1", 3, tableFlags)) {
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
 
@@ -257,57 +196,6 @@ public class AppLayer implements Layer {
                     ImGui.endTable();
                 }
 
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Rigid Body")) {
-
-                ImGui.separator();
-                ImGui.beginGroup();
-                ImGui.button("AAA");
-                ImGui.sameLine();
-                ImGui.button("BBB");
-                ImGui.sameLine();
-                ImGui.beginGroup();
-                ImGui.button("CCC");
-                ImGui.button("DDD");
-                ImGui.endGroup();
-                ImGui.sameLine();
-                ImGui.button("EEE");
-                ImGui.endGroup();
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Joint")) {
-
-                ImGui.separator();
-                ImGui.beginGroup();
-                ImGui.button("AAA");
-                ImGui.sameLine();
-                ImGui.button("BBB");
-                ImGui.sameLine();
-                ImGui.beginGroup();
-                ImGui.button("CCC");
-                ImGui.button("DDD");
-                ImGui.endGroup();
-                ImGui.sameLine();
-                ImGui.button("EEE");
-                ImGui.endGroup();
-                ImGui.endTabItem();
-            }
-            if (ImGui.beginTabItem("Soft Body")) {
-
-                ImGui.separator();
-                ImGui.beginGroup();
-                ImGui.button("AAA");
-                ImGui.sameLine();
-                ImGui.button("BBB");
-                ImGui.sameLine();
-                ImGui.beginGroup();
-                ImGui.button("CCC");
-                ImGui.button("DDD");
-                ImGui.endGroup();
-                ImGui.sameLine();
-                ImGui.button("EEE");
-                ImGui.endGroup();
                 ImGui.endTabItem();
             }
             ImGui.endTabBar();
