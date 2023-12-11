@@ -1,19 +1,27 @@
 package dev.xfj;
 
+import dev.xfj.application.Application;
+import dev.xfj.format.pmx.PMXFile;
+import dev.xfj.parsing.PMXParser;
 import imgui.ImGui;
 import imgui.flag.*;
-import imgui.type.ImInt;
 import imgui.type.ImString;
+
+import java.nio.file.Path;
+import java.util.Optional;
 
 public class AppLayer implements Layer {
     private int encodingIndex = 0;
     private int uvIndex = 0;
     private int displayIndex = 0;
     private int boneIndex = 0;
+    private PMXFile pmxFile;
+    private boolean english;
 
     @Override
     public void onAttach() {
-
+        pmxFile = new PMXFile();
+        english = true;
     }
 
     @Override
@@ -28,6 +36,22 @@ public class AppLayer implements Layer {
 
     @Override
     public void onUIRender() {
+        if (ImGui.beginMenuBar()) {
+            if (ImGui.beginMenu("File")) {
+                if (ImGui.menuItem("Load PMX...", "Ctrl+O")) {
+                    loadModel();
+                }
+
+                ImGui.separator();
+
+                if (ImGui.menuItem("Exit")) {
+                    Application.close(Application.getInstance());
+                }
+                ImGui.endMenu();
+            }
+            ImGui.endMenuBar();
+        }
+
 
         int tab_bar_flags = ImGuiTabBarFlags.None;
         int tableFlags = ImGuiTableFlags.None;
@@ -42,7 +66,7 @@ public class AppLayer implements Layer {
                     ImGui.tableSetColumnIndex(0);
                     ImGui.text("PMX Version");
                     ImGui.tableSetColumnIndex(1);
-                    ImGui.text("v");
+                    ImGui.text(String.valueOf(pmxFile.getVersion()));
                     ImGui.tableSetColumnIndex(2);
                     ImGui.text("Encoding");
                     ImGui.tableSetColumnIndex(3);
@@ -95,16 +119,23 @@ public class AppLayer implements Layer {
                     ImGui.tableSetColumnIndex(0);
                     ImGui.text("Name");
                     ImGui.tableSetColumnIndex(1);
-                    ImGui.inputText("##input1", new ImString(""));
+                    ImGui.inputText("##input1", english ? new ImString(pmxFile.getModelNameEnglish()) : new ImString(pmxFile.getModelNameJapanese()));
                     ImGui.sameLine();
-                    ImGui.button("JP");
+
+                    if (ImGui.button("JP")) {
+                        english = false;
+                    }
                     ImGui.sameLine();
-                    ImGui.button("EN");
+
+                    if (ImGui.button("EN")) {
+                        english = true;
+                    }
+
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
                     ImGui.text("Comment");
                     ImGui.tableSetColumnIndex(1);
-                    ImGui.inputTextMultiline("##input2", new ImString(""));
+                    ImGui.inputTextMultiline("##input2", english ? new ImString(pmxFile.getCommentsEnglish()) : new ImString(pmxFile.getCommentsJapanese()));
 
                     ImGui.endTable();
                 }
@@ -200,6 +231,20 @@ public class AppLayer implements Layer {
             }
             ImGui.endTabBar();
         }
+    }
 
+    private void loadModel() {
+        FileDialog fileDialog = new FileDialog();
+        Optional<String> filePath = fileDialog.openFile("PMX (*.pmx)\0*.pmx\0");
+        filePath.ifPresent(path -> loadModel(Path.of(path)));
+    }
+
+    private void loadModel(Path filePath) {
+        try {
+            PMXParser pmxParser = new PMXParser(filePath);
+            pmxFile = pmxParser.parse();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

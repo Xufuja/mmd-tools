@@ -36,7 +36,6 @@ public class Application {
     private float lastFrameTime;
     private LayerStack layerStack;
     private EventCallBack.EventCallbackFn eventCallback;
-    private Runnable menuBarCallback;
     private final ImGuiImplGlfw imGuiGlfw;
     private final ImGuiImplGl3 imGuiGl3;
 
@@ -144,9 +143,7 @@ public class Application {
 
             int window_flags = ImGuiWindowFlags.NoDocking;
 
-            if (menuBarCallback != null) {
-                window_flags |= ImGuiWindowFlags.MenuBar;
-            }
+            window_flags |= ImGuiWindowFlags.MenuBar;
 
             ImGuiViewport viewport = ImGui.getMainViewport();
             ImGui.setNextWindowPos(viewport.getWorkPosX(), viewport.getWorkPosY());
@@ -167,13 +164,6 @@ public class Application {
             ImGui.popStyleVar();
 
             ImGui.popStyleVar(2);
-
-            if (menuBarCallback != null) {
-                if (ImGui.beginMenuBar()) {
-                    menuBarCallback.run();
-                    ImGui.endMenuBar();
-                }
-            }
 
             for (Layer layer : layerStack.getLayers()) {
                 layer.onUIRender();
@@ -226,10 +216,6 @@ public class Application {
 
     public float getTime() {
         return (float) glfwGetTime();
-    }
-
-    public void setMenuBarCallback(Runnable menuBarCallback) {
-        this.menuBarCallback = menuBarCallback;
     }
 
     public static Application getInstance() {

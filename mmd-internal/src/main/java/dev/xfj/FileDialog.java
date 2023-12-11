@@ -87,7 +87,7 @@ public class FileDialog {
         public String lpTemplateName;
     }
 
-    public Optional<String> openFileImpl(String filter) {
+    public Optional<String> openFile(String filter) {
         OPENFILENAMEA ofn = new OPENFILENAMEA();
         byte[] szFile = new byte[260];
         byte[] currentDirectory = new byte[256];
@@ -111,7 +111,7 @@ public class FileDialog {
         }
     }
 
-    public Optional<String> saveFileImpl(String filter) {
+    public Optional<String> saveFile(String filter) {
         OPENFILENAMEA ofn = new OPENFILENAMEA();
         byte[] szFile = new byte[260];
         byte[] currentDirectory = new byte[256];

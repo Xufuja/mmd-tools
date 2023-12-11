@@ -10,15 +10,7 @@ public class Main {
         spec.name = "MMD Tools";
         Application app = new Application(spec);
         app.pushLayer(new AppLayer());
-
-        app.setMenuBarCallback(() -> {
-            if (ImGui.beginMenu("File")) {
-                if (ImGui.menuItem("Exit")) {
-                    Application.close(Application.getInstance());
-                }
-                ImGui.endMenu();
-            }
-        });
         app.run();
     }
+
 }
