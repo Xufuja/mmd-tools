@@ -6,15 +6,14 @@ import dev.xfj.events.Event;
 import dev.xfj.events.EventDispatcher;
 import dev.xfj.events.application.WindowCloseEvent;
 import dev.xfj.events.application.WindowResizeEvent;
+import dev.xfj.events.key.KeyPressedEvent;
+import dev.xfj.events.key.KeyReleasedEvent;
 import imgui.*;
 import imgui.flag.*;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.type.ImBoolean;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWWindowCloseCallback;
-import org.lwjgl.glfw.GLFWWindowSizeCallback;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL45;
 
@@ -91,6 +90,26 @@ public class Application {
             public void invoke(long window) {
                 WindowCloseEvent event = new WindowCloseEvent();
                 eventCallback.handle(event);
+            }
+        });
+
+        glfwSetKeyCallback(windowHandle, new GLFWKeyCallback() {
+            @Override
+            public void invoke(long window, int key, int scanCode, int action, int mods) {
+                switch (action) {
+                    case GLFW_PRESS -> {
+                        KeyPressedEvent event = new KeyPressedEvent(key);
+                        eventCallback.handle(event);
+                    }
+                    case GLFW_RELEASE -> {
+                        KeyReleasedEvent event = new KeyReleasedEvent(key);
+                        eventCallback.handle(event);
+                    }
+                    case GLFW_REPEAT -> {
+                        KeyPressedEvent event = new KeyPressedEvent(key, true);
+                        eventCallback.handle(event);
+                    }
+                }
             }
         });
 
@@ -194,7 +213,7 @@ public class Application {
         eventDispatcher.dispatch(WindowCloseEvent.class, this::onWindowClose);
         eventDispatcher.dispatch(WindowResizeEvent.class, this::onWindowResize);
 
-        /*ListIterator<Layer> it = layerStack.getLayers().listIterator(layerStack.getLayers().size());
+        ListIterator<Layer> it = layerStack.getLayers().listIterator(layerStack.getLayers().size());
         while (it.hasPrevious()) {
             Layer layer = it.previous();
 
@@ -203,7 +222,7 @@ public class Application {
             }
 
             layer.onEvent(event);
-        }*/
+        }
     }
 
     public void pushLayer(Layer layer) {

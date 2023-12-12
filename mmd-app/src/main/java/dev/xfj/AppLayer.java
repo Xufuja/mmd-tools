@@ -1,9 +1,17 @@
 package dev.xfj;
 
 import dev.xfj.application.Application;
+import dev.xfj.events.Event;
+import dev.xfj.events.EventDispatcher;
+import dev.xfj.events.key.KeyPressedEvent;
+import dev.xfj.events.mouse.MouseButtonPressedEvent;
 import dev.xfj.format.pmx.PMXFile;
+import dev.xfj.input.Input;
+import dev.xfj.input.KeyCodes;
 import dev.xfj.parsing.PMXParser;
 import imgui.ImGui;
+import imgui.extension.imguizmo.ImGuizmo;
+import imgui.extension.imguizmo.flag.Operation;
 import imgui.flag.*;
 import imgui.type.ImString;
 
@@ -233,6 +241,12 @@ public class AppLayer implements Layer {
         }
     }
 
+    @Override
+    public void onEvent(Event event) {
+        EventDispatcher eventDispatcher = new EventDispatcher(event);
+        eventDispatcher.dispatch(KeyPressedEvent.class, this::onKeyPressed);
+    }
+
     private void loadModel() {
         FileDialog fileDialog = new FileDialog();
         Optional<String> filePath = fileDialog.openFile("PMX (*.pmx)\0*.pmx\0");
@@ -246,5 +260,24 @@ public class AppLayer implements Layer {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private boolean onKeyPressed(KeyPressedEvent event) {
+        if (event.isRepeat()) {
+            return false;
+        }
+
+        boolean control = Input.isKeyDown(KeyCodes.LEFT_CONTROL) || Input.isKeyDown(KeyCodes.RIGHT_CONTROL);
+        boolean shift = Input.isKeyDown(KeyCodes.LEFT_SHIFT) || Input.isKeyDown(KeyCodes.RIGHT_SHIFT);
+
+        switch (event.getKeyCode()) {
+            case KeyCodes.O -> {
+                if (control) {
+                    loadModel();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
