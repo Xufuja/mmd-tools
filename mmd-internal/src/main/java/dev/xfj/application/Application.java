@@ -136,9 +136,10 @@ public class Application {
         fontConfig.setFontDataOwnedByAtlas(false);
 
         fonts = new ImFont[]{
-                io.getFonts().addFontFromFileTTF("assets/fonts/roboto/Roboto-Regular.ttf", 20)
+                io.getFonts().addFontFromFileTTF("assets/fonts/roboto/Roboto-Regular.ttf", 20),
+                io.getFonts().addFontFromFileTTF("assets/fonts/notosansjp/static/NotoSansJP-Regular.ttf", 20, io.getFonts().getGlyphRangesJapanese())
         };
-        io.setFontDefault(fonts[0]);
+        io.setFontDefault(fonts[1]);
 
         imGuiGlfw.init(windowHandle, true);
         imGuiGl3.init("#version 450");

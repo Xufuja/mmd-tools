@@ -4,18 +4,20 @@ import dev.xfj.application.Application;
 import dev.xfj.events.Event;
 import dev.xfj.events.EventDispatcher;
 import dev.xfj.events.key.KeyPressedEvent;
-import dev.xfj.events.mouse.MouseButtonPressedEvent;
 import dev.xfj.format.pmx.PMXFile;
+import dev.xfj.format.pmx.PMXFileDisplayFrame;
+import dev.xfj.format.pmx.PMXFileDisplayFrameData;
 import dev.xfj.input.Input;
 import dev.xfj.input.KeyCodes;
 import dev.xfj.parsing.PMXParser;
 import imgui.ImGui;
-import imgui.extension.imguizmo.ImGuizmo;
-import imgui.extension.imguizmo.flag.Operation;
-import imgui.flag.*;
+import imgui.flag.ImGuiComboFlags;
+import imgui.flag.ImGuiTabBarFlags;
+import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImString;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 public class AppLayer implements Layer {
@@ -154,17 +156,19 @@ public class AppLayer implements Layer {
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
 
-                    ImGui.inputText("##common", new ImString());
+                    ImGui.inputText("##common", new ImString(String.valueOf(displayIndex)));
+                    //ImGui.sameLine();
+                    //ImGui.inputText("##displayframe", new ImString());
                     ImGui.sameLine();
-                    ImGui.inputText("##displayframe", new ImString());
+                    ImGui.text(String.valueOf(pmxFile.getDisplayFrameCount()));
 
-                    String[] displayItems = {"Root", "Center"};
+                    List<PMXFileDisplayFrame> displayItems = pmxFile.getDisplayFrames();
 
                     if (ImGui.beginListBox("##listbox 1")) {
-                        for (int n = 0; n < displayItems.length; n++) {
+                        for (int n = 0; displayItems != null && n < pmxFile.getDisplayFrameCount(); n++) {
                             boolean isSelected = (displayIndex == n);
 
-                            if (ImGui.selectable(displayItems[n], isSelected)) {
+                            if (ImGui.selectable(displayItems.get(n).getDisplayFrameNameJapanese(), isSelected)) {
                                 displayIndex = n;
 
                                 if (isSelected) {
@@ -191,25 +195,42 @@ public class AppLayer implements Layer {
 
                     ImGui.text("In-frame element");
                     ImGui.sameLine();
-                    ImGui.button("JP");
+
+                    if (ImGui.button("JP")) {
+                        english = false;
+                    }
                     ImGui.sameLine();
-                    ImGui.button("EN");
+
+                    if (ImGui.button("EN")) {
+                        english = true;
+                    }
 
                     ImGui.text("Name");
                     ImGui.sameLine();
-                    ImGui.inputText("##displayselected", new ImString(displayItems[displayIndex]));
+                    ImGui.inputText("##displayselected", displayItems != null ? english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()) : new ImString(""));
 
-                    ImGui.inputText("##subindex", new ImString());
+                    List<PMXFileDisplayFrameData> boneItems = displayItems != null ? displayItems.get(displayIndex).getFrames() : null;
+
+                    ImGui.inputText("##subindex", new ImString(String.valueOf(boneIndex)));
+
                     ImGui.sameLine();
-                    ImGui.text("count here");
+                    ImGui.text(displayItems != null ? String.valueOf(displayItems.get(displayIndex).getFrameCount()) : "");
 
-                    String[] boneItems = {"B0", "B1"};
 
                     if (ImGui.beginListBox("##listbox 2")) {
-                        for (int n = 0; n < boneItems.length; n++) {
+                        for (int n = 0; displayItems != null && n < displayItems.get(displayIndex).getFrameCount(); n++) {
                             boolean isSelected = (boneIndex == n);
 
-                            if (ImGui.selectable(boneItems[n], isSelected)) {
+                            String name = switch (boneItems.get(n).getFrameType()) {
+                                case 0 ->
+                                        "B".concat(boneItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBonenameEnglish().isEmpty() ? pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBonenameEnglish() : pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBoneNameJapanese()));
+
+                                case 1 ->
+                                        "M".concat(boneItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameEnglish().isEmpty() ? pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameEnglish() : pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameJapanese()));
+                                default -> throw new RuntimeException("Invalid Display Frame Type!");
+                            };
+
+                            if (ImGui.selectable(name, isSelected)) {
                                 boneIndex = n;
 
                                 if (isSelected) {
