@@ -31,7 +31,7 @@ public class AppLayer implements Layer {
     @Override
     public void onAttach() {
         pmxFile = new PMXFile();
-        english = true;
+        english = false;
     }
 
     @Override
@@ -132,14 +132,10 @@ public class AppLayer implements Layer {
                     ImGui.inputText("##input1", english ? new ImString(pmxFile.getModelNameEnglish()) : new ImString(pmxFile.getModelNameJapanese()));
                     ImGui.sameLine();
 
-                    if (ImGui.button("JP")) {
-                        english = false;
+                    if (ImGui.checkbox("English", english)){
+                        english = !english;
                     }
-                    ImGui.sameLine();
 
-                    if (ImGui.button("EN")) {
-                        english = true;
-                    }
 
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
@@ -196,13 +192,8 @@ public class AppLayer implements Layer {
                     ImGui.text("In-frame element");
                     ImGui.sameLine();
 
-                    if (ImGui.button("JP")) {
-                        english = false;
-                    }
-                    ImGui.sameLine();
-
-                    if (ImGui.button("EN")) {
-                        english = true;
+                    if (ImGui.checkbox("English", english)){
+                        english = !english;
                     }
 
                     ImGui.text("Name");
