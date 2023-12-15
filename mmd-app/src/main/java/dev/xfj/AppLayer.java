@@ -199,7 +199,8 @@ public class AppLayer implements Layer {
                     ImGui.text("Name");
                     ImGui.sameLine();
                     ImGui.inputText("##displayselected", displayItems != null ? english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()) : new ImString(""));
-
+                    ImGui.sameLine();
+                    ImGui.text(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
                     List<PMXFileDisplayFrameData> boneItems = displayItems != null ? displayItems.get(displayIndex).getFrames() : null;
 
                     ImGui.inputText("##subindex", new ImString(String.valueOf(boneIndex)));
@@ -207,17 +208,16 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
                     ImGui.text(displayItems != null ? String.valueOf(displayItems.get(displayIndex).getFrameCount()) : "");
 
-
                     if (ImGui.beginListBox("##listbox 2")) {
                         for (int n = 0; displayItems != null && n < displayItems.get(displayIndex).getFrameCount(); n++) {
                             boolean isSelected = (boneIndex == n);
 
                             String name = switch (boneItems.get(n).getFrameType()) {
                                 case 0 ->
-                                        "B".concat(boneItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBonenameEnglish().isEmpty() ? pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBonenameEnglish() : pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBoneNameJapanese()));
+                                        String.valueOf(n).concat(" : B".concat(boneItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBonenameEnglish().isEmpty() ? pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBonenameEnglish() : pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBoneNameJapanese())));
 
                                 case 1 ->
-                                        "M".concat(boneItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameEnglish().isEmpty() ? pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameEnglish() : pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameJapanese()));
+                                        String.valueOf(n).concat(" : M".concat(boneItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameEnglish().isEmpty() ? pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameEnglish() : pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameJapanese())));
                                 default -> throw new RuntimeException("Invalid Display Frame Type!");
                             };
 
