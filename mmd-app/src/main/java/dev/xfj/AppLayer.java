@@ -132,7 +132,7 @@ public class AppLayer implements Layer {
                     ImGui.inputText("##input1", english ? new ImString(pmxFile.getModelNameEnglish()) : new ImString(pmxFile.getModelNameJapanese()));
                     ImGui.sameLine();
 
-                    if (ImGui.checkbox("English", english)){
+                    if (ImGui.checkbox("English", english)) {
                         english = !english;
                     }
 
@@ -147,6 +147,8 @@ public class AppLayer implements Layer {
                 }
                 ImGui.endTabItem();
             }
+            boolean displayDeleted = false;
+
             if (ImGui.beginTabItem("Display")) {
                 if (ImGui.beginTable("##table1", 3, tableFlags)) {
                     ImGui.tableNextRow();
@@ -185,14 +187,17 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
                     ImGui.button("+");
                     ImGui.sameLine();
-                    ImGui.button("x");
+
+                    if (ImGui.button("x")) {
+                        displayDeleted = true;
+                    }
 
                     ImGui.tableSetColumnIndex(1);
 
                     ImGui.text("In-frame element");
                     ImGui.sameLine();
 
-                    if (ImGui.checkbox("English", english)){
+                    if (ImGui.checkbox("English", english)) {
                         english = !english;
                     }
 
@@ -200,7 +205,7 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
                     ImGui.inputText("##displayselected", displayItems != null ? english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()) : new ImString(""));
                     ImGui.sameLine();
-                    ImGui.text(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
+                    ImGui.text(displayItems != null && displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
                     List<PMXFileDisplayFrameData> boneItems = displayItems != null ? displayItems.get(displayIndex).getFrames() : null;
 
                     ImGui.inputText("##subindex", new ImString(String.valueOf(boneIndex)));
@@ -245,6 +250,16 @@ public class AppLayer implements Layer {
                     ImGui.button("x");
 
                     ImGui.endTable();
+
+                    if (displayDeleted) {
+                        pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrameCount() - 1);
+                        pmxFile.getDisplayFrames().remove(displayIndex);
+                        displayIndex--;
+
+                        if (displayIndex < 0) {
+                            displayIndex = 0;
+                        }
+                    }
                 }
 
                 ImGui.endTabItem();
