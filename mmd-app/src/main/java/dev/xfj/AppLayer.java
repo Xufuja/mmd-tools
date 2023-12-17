@@ -12,6 +12,7 @@ import dev.xfj.input.KeyCodes;
 import dev.xfj.parsing.PMXParser;
 import imgui.ImGui;
 import imgui.flag.ImGuiComboFlags;
+import imgui.flag.ImGuiInputTextFlags;
 import imgui.flag.ImGuiTabBarFlags;
 import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImString;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class AppLayer implements Layer {
-    private int encodingIndex = 0;
     private int uvIndex = 0;
     private int displayIndex = 0;
     private int boneIndex = 0;
@@ -81,22 +81,7 @@ public class AppLayer implements Layer {
                     ImGui.text("Encoding");
                     ImGui.tableSetColumnIndex(3);
 
-                    String[] encodingItems = {"UTF16", "UTF8"};
-
-                    if (ImGui.beginCombo("##combo 1", encodingItems[encodingIndex], ImGuiComboFlags.None)) {
-                        for (int n = 0; n < encodingItems.length; n++) {
-                            boolean isSelected = (encodingIndex == n);
-
-                            if (ImGui.selectable(encodingItems[n], isSelected)) {
-                                encodingIndex = n;
-                            }
-
-                            if (isSelected) {
-                                ImGui.setItemDefaultFocus();
-                            }
-                        }
-                        ImGui.endCombo();
-                    }
+                    ImGui.inputText("##locale", pmxFile.getGlobals() != null ? new ImString(pmxFile.getGlobals().getTextEncoding() == 1 ? "UTF8" : "UTF16-LE") : new ImString(""), ImGuiInputTextFlags.ReadOnly);
 
                     ImGui.tableSetColumnIndex(4);
                     ImGui.text("UV Number");
@@ -129,7 +114,7 @@ public class AppLayer implements Layer {
                     ImGui.tableSetColumnIndex(0);
                     ImGui.text("Name");
                     ImGui.tableSetColumnIndex(1);
-                    ImGui.inputText("##input1", english ? new ImString(pmxFile.getModelNameEnglish()) : new ImString(pmxFile.getModelNameJapanese()));
+                    ImGui.inputText("##input1", english ? new ImString(pmxFile.getModelNameEnglish()) : new ImString(pmxFile.getModelNameJapanese()), ImGuiInputTextFlags.ReadOnly);
                     ImGui.sameLine();
 
                     if (ImGui.checkbox("English", english)) {
@@ -141,7 +126,7 @@ public class AppLayer implements Layer {
                     ImGui.tableSetColumnIndex(0);
                     ImGui.text("Comment");
                     ImGui.tableSetColumnIndex(1);
-                    ImGui.inputTextMultiline("##input2", english ? new ImString(pmxFile.getCommentsEnglish()) : new ImString(pmxFile.getCommentsJapanese()));
+                    ImGui.inputTextMultiline("##input2", english ? new ImString(pmxFile.getCommentsEnglish()) : new ImString(pmxFile.getCommentsJapanese()), ImGuiInputTextFlags.ReadOnly);
 
                     ImGui.endTable();
                 }
@@ -156,7 +141,7 @@ public class AppLayer implements Layer {
 
                     ImGui.inputText("##common", new ImString(String.valueOf(displayIndex)));
                     //ImGui.sameLine();
-                    //ImGui.inputText("##displayframe", new ImString());
+                    //ImGui.inputText("##displayframe", new ImString(), ImGuiInputTextFlags.ReadOnly);
                     ImGui.sameLine();
                     ImGui.text(String.valueOf(pmxFile.getDisplayFrameCount()));
 
@@ -203,12 +188,12 @@ public class AppLayer implements Layer {
 
                     ImGui.text("Name");
                     ImGui.sameLine();
-                    ImGui.inputText("##displayselected", displayItems != null ? english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()) : new ImString(""));
+                    ImGui.inputText("##displayselected", displayItems != null ? english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()) : new ImString(""), ImGuiInputTextFlags.ReadOnly);
                     ImGui.sameLine();
                     ImGui.text(displayItems != null && displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
                     List<PMXFileDisplayFrameData> boneItems = displayItems != null ? displayItems.get(displayIndex).getFrames() : null;
 
-                    ImGui.inputText("##subindex", new ImString(String.valueOf(boneIndex)));
+                    ImGui.inputText("##subindex", new ImString(String.valueOf(boneIndex)), ImGuiInputTextFlags.ReadOnly);
 
                     ImGui.sameLine();
                     ImGui.text(displayItems != null ? String.valueOf(displayItems.get(displayIndex).getFrameCount()) : "");
