@@ -173,9 +173,13 @@ public class AppLayer implements Layer {
                     ImGui.button("+");
                     ImGui.sameLine();
 
+                    ImGui.beginDisabled(displayItems != null && displayItems.get(displayIndex).getSpecialFlag() == 1);
+
                     if (ImGui.button("x")) {
                         displayDeleted = true;
                     }
+
+                    ImGui.endDisabled();
 
                     ImGui.tableSetColumnIndex(1);
 
