@@ -18,6 +18,7 @@ import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImString;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +28,13 @@ public class AppLayer implements Layer {
     private int boneIndex = 0;
     private PMXFile pmxFile;
     private boolean english;
+    private boolean scroll;
 
     @Override
     public void onAttach() {
         pmxFile = new PMXFile();
         english = false;
+        scroll = false;
     }
 
     @Override
@@ -159,16 +162,61 @@ public class AppLayer implements Layer {
                                 }
                             }
                         }
+
+                        if (displayItems != null && scroll) {
+                            ImGui.setScrollY(normalize(displayIndex, 0, displayItems.size() - 1, 0, (int) ImGui.getScrollMaxY()));
+                            scroll = false;
+                        }
+
                         ImGui.endListBox();
                     }
 
-                    ImGui.button("T");
+                    if (ImGui.button("T")) {
+                        if (displayItems != null) {
+                            PMXFileDisplayFrame frame = displayItems.get(displayIndex);
+                            displayItems.remove(frame);
+                            displayItems.add(0, frame);
+                            displayIndex = 0;
+                            scroll = true;
+                        }
+                    }
+
                     ImGui.sameLine();
-                    ImGui.button("^");
+
+                    if (ImGui.button("^")) {
+                        if (displayItems != null && displayItems.size() > 1) {
+                            if (displayIndex - 1 > -1) {
+                                Collections.swap(displayItems, displayIndex, displayIndex - 1);
+                                displayIndex = displayIndex - 1;
+                                scroll = true;
+                            }
+                        }
+                    }
+
                     ImGui.sameLine();
-                    ImGui.button("v");
+
+                    if (ImGui.button("v")) {
+                        if (displayItems != null && displayItems.size() > 1) {
+                            if (displayIndex + 1 < displayItems.size()) {
+                                Collections.swap(displayItems, displayIndex, displayIndex + 1);
+                                displayIndex = displayIndex + 1;
+                                scroll = true;
+                            }
+                        }
+                    }
+
                     ImGui.sameLine();
-                    ImGui.button("B");
+
+                    if (ImGui.button("B")) {
+                        if (displayItems != null) {
+                            PMXFileDisplayFrame frame = displayItems.get(displayIndex);
+                            displayItems.remove(frame);
+                            displayItems.add(frame);
+                            displayIndex = displayItems.size() - 1;
+                            scroll = true;
+                        }
+                    }
+
                     ImGui.sameLine();
                     ImGui.button("+");
                     ImGui.sameLine();
@@ -276,6 +324,10 @@ public class AppLayer implements Layer {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private int normalize(int value, int minValue, int maxValue, int minNormalize, int maxNormalize) {
+        return minNormalize + ((value - minValue) * (maxNormalize - minNormalize)) / (maxValue - minValue);
     }
 
     private boolean onKeyPressed(KeyPressedEvent event) {
