@@ -10,6 +10,7 @@ import dev.xfj.format.pmx.PMXFileDisplayFrameData;
 import dev.xfj.input.Input;
 import dev.xfj.input.KeyCodes;
 import dev.xfj.parsing.PMXParser;
+import dev.xfj.writer.PMXWriter;
 import imgui.ImGui;
 import imgui.flag.ImGuiComboFlags;
 import imgui.flag.ImGuiInputTextFlags;
@@ -53,6 +54,10 @@ public class AppLayer implements Layer {
             if (ImGui.beginMenu("File")) {
                 if (ImGui.menuItem("Load PMX...", "Ctrl+O")) {
                     loadModel();
+                }
+
+                if (ImGui.menuItem("Save PMX...", "Ctrl+S")) {
+                    saveModel();
                 }
 
                 ImGui.separator();
@@ -229,6 +234,8 @@ public class AppLayer implements Layer {
 
                     ImGui.endDisabled();
 
+                    ImGui.sameLine();
+
                     ImGui.tableSetColumnIndex(1);
 
                     ImGui.text("In-frame element");
@@ -326,6 +333,21 @@ public class AppLayer implements Layer {
         }
     }
 
+    private void saveModel() {
+        FileDialog fileDialog = new FileDialog();
+        Optional<String> filePath = fileDialog.saveFile("PMX (*.pmx)\0*.pmx\0");
+        filePath.ifPresent(path -> saveModel(Path.of(path)));
+    }
+
+    private void saveModel(Path filePath) {
+        try {
+            PMXWriter pmxWriter = new PMXWriter(pmxFile, false);
+            pmxWriter.write(filePath);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     private int normalize(int value, int minValue, int maxValue, int minNormalize, int maxNormalize) {
         return minNormalize + ((value - minValue) * (maxNormalize - minNormalize)) / (maxValue - minValue);
     }
@@ -342,6 +364,12 @@ public class AppLayer implements Layer {
             case KeyCodes.O -> {
                 if (control) {
                     loadModel();
+                    return true;
+                }
+            }
+            case KeyCodes.S -> {
+                if (control) {
+                    saveModel();
                     return true;
                 }
             }
