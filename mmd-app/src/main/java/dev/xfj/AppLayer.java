@@ -176,7 +176,7 @@ public class AppLayer implements Layer {
                         ImGui.endListBox();
                     }
 
-                    if (ImGui.button("T")) {
+                    if (ImGui.button("T##1")) {
                         if (displayItems != null) {
                             PMXFileDisplayFrame frame = displayItems.get(displayIndex);
                             displayItems.remove(frame);
@@ -281,7 +281,16 @@ public class AppLayer implements Layer {
                         ImGui.endListBox();
                     }
 
-                    ImGui.button("T");
+                    if (ImGui.button("T##2")) {
+                        if (boneItems != null) {
+                            PMXFileDisplayFrameData frame = boneItems.get(boneIndex);
+                            boneItems.remove(frame);
+                            boneItems.add(0, frame);
+                            boneIndex = 0;
+                            scroll = true;
+                        }
+                    }
+
                     ImGui.sameLine();
                     ImGui.button("^");
                     ImGui.sameLine();
