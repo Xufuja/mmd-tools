@@ -26,16 +26,18 @@ import java.util.Optional;
 public class AppLayer implements Layer {
     private int uvIndex = 0;
     private int displayIndex = 0;
-    private int boneIndex = 0;
+    private int frameItemIndex = 0;
     private PMXFile pmxFile;
     private boolean english;
-    private boolean scroll;
+    private boolean scrollDisplayItems;
+    private boolean scrollFrameItems;
 
     @Override
     public void onAttach() {
         pmxFile = new PMXFile();
         english = false;
-        scroll = false;
+        scrollDisplayItems = false;
+        scrollFrameItems = false;
     }
 
     @Override
@@ -168,9 +170,9 @@ public class AppLayer implements Layer {
                             }
                         }
 
-                        if (displayItems != null && scroll) {
+                        if (displayItems != null && scrollDisplayItems) {
                             ImGui.setScrollY(normalize(displayIndex, 0, displayItems.size() - 1, 0, (int) ImGui.getScrollMaxY()));
-                            scroll = false;
+                            scrollDisplayItems = false;
                         }
 
                         ImGui.endListBox();
@@ -182,30 +184,30 @@ public class AppLayer implements Layer {
                             displayItems.remove(frame);
                             displayItems.add(0, frame);
                             displayIndex = 0;
-                            scroll = true;
+                            scrollDisplayItems = true;
                         }
                     }
 
                     ImGui.sameLine();
 
-                    if (ImGui.button("^")) {
+                    if (ImGui.button("^##1")) {
                         if (displayItems != null && displayItems.size() > 1) {
                             if (displayIndex - 1 > -1) {
                                 Collections.swap(displayItems, displayIndex, displayIndex - 1);
                                 displayIndex = displayIndex - 1;
-                                scroll = true;
+                                scrollDisplayItems = true;
                             }
                         }
                     }
 
                     ImGui.sameLine();
 
-                    if (ImGui.button("v")) {
+                    if (ImGui.button("v##1")) {
                         if (displayItems != null && displayItems.size() > 1) {
                             if (displayIndex + 1 < displayItems.size()) {
                                 Collections.swap(displayItems, displayIndex, displayIndex + 1);
                                 displayIndex = displayIndex + 1;
-                                scroll = true;
+                                scrollDisplayItems = true;
                             }
                         }
                     }
@@ -218,7 +220,7 @@ public class AppLayer implements Layer {
                             displayItems.remove(frame);
                             displayItems.add(frame);
                             displayIndex = displayItems.size() - 1;
-                            scroll = true;
+                            scrollDisplayItems = true;
                         }
                     }
 
@@ -250,51 +252,77 @@ public class AppLayer implements Layer {
                     ImGui.inputText("##displayselected", displayItems != null ? english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()) : new ImString(""), ImGuiInputTextFlags.ReadOnly);
                     ImGui.sameLine();
                     ImGui.text(displayItems != null && displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
-                    List<PMXFileDisplayFrameData> boneItems = displayItems != null ? displayItems.get(displayIndex).getFrames() : null;
+                    List<PMXFileDisplayFrameData> frameItems = displayItems != null ? displayItems.get(displayIndex).getFrames() : null;
 
-                    ImGui.inputText("##subindex", new ImString(String.valueOf(boneIndex)), ImGuiInputTextFlags.ReadOnly);
+                    ImGui.inputText("##subindex", new ImString(String.valueOf(frameItemIndex)), ImGuiInputTextFlags.ReadOnly);
 
                     ImGui.sameLine();
                     ImGui.text(displayItems != null ? String.valueOf(displayItems.get(displayIndex).getFrameCount()) : "");
 
                     if (ImGui.beginListBox("##listbox 2")) {
                         for (int n = 0; displayItems != null && n < displayItems.get(displayIndex).getFrameCount(); n++) {
-                            boolean isSelected = (boneIndex == n);
+                            boolean isSelected = (frameItemIndex == n);
 
-                            String name = switch (boneItems.get(n).getFrameType()) {
+                            String name = switch (frameItems.get(n).getFrameType()) {
                                 case 0 ->
-                                        String.valueOf(n).concat(" : B".concat(boneItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBonenameEnglish().isEmpty() ? pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBonenameEnglish() : pmxFile.getBones().get((short) boneItems.get(n).getFrameData().getValue()).getBoneNameJapanese())));
+                                        String.valueOf(n).concat(" : B".concat(frameItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBonenameEnglish().isEmpty() ? pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBonenameEnglish() : pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBoneNameJapanese())));
 
                                 case 1 ->
-                                        String.valueOf(n).concat(" : M".concat(boneItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameEnglish().isEmpty() ? pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameEnglish() : pmxFile.getMorphs().get((byte) boneItems.get(n).getFrameData().getValue()).getMorphNameJapanese())));
+                                        String.valueOf(n).concat(" : M".concat(frameItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameEnglish().isEmpty() ? pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameEnglish() : pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameJapanese())));
                                 default -> throw new RuntimeException("Invalid Display Frame Type!");
                             };
 
                             if (ImGui.selectable(name, isSelected)) {
-                                boneIndex = n;
+                                frameItemIndex = n;
 
                                 if (isSelected) {
                                     ImGui.setItemDefaultFocus();
                                 }
                             }
                         }
+
+                        if (frameItems != null && scrollFrameItems) {
+                            ImGui.setScrollY(normalize(frameItemIndex, 0, frameItems.size() - 1, 0, (int) ImGui.getScrollMaxY()));
+                            scrollFrameItems = false;
+                        }
+
                         ImGui.endListBox();
                     }
 
                     if (ImGui.button("T##2")) {
-                        if (boneItems != null) {
-                            PMXFileDisplayFrameData frame = boneItems.get(boneIndex);
-                            boneItems.remove(frame);
-                            boneItems.add(0, frame);
-                            boneIndex = 0;
-                            scroll = true;
+                        if (frameItems != null) {
+                            PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
+                            frameItems.remove(frame);
+                            frameItems.add(0, frame);
+                            frameItemIndex = 0;
+                            scrollFrameItems = true;
                         }
                     }
 
                     ImGui.sameLine();
-                    ImGui.button("^");
+
+                    if (ImGui.button("^##2")) {
+                        if (frameItems != null && frameItems.size() > 1) {
+                            if (frameItemIndex - 1 > -1) {
+                                Collections.swap(frameItems, frameItemIndex, frameItemIndex - 1);
+                                frameItemIndex = frameItemIndex - 1;
+                                scrollFrameItems = true;
+                            }
+                        }
+                    }
+
                     ImGui.sameLine();
-                    ImGui.button("v");
+
+                    if (ImGui.button("v##2")) {
+                        if (frameItems != null && frameItems.size() > 1) {
+                            if (frameItemIndex + 1 < frameItems.size()) {
+                                Collections.swap(frameItems, frameItemIndex, frameItemIndex + 1);
+                                frameItemIndex = frameItemIndex + 1;
+                                scrollFrameItems = true;
+                            }
+                        }
+                    }
+
                     ImGui.sameLine();
                     ImGui.button("B");
                     ImGui.sameLine();
