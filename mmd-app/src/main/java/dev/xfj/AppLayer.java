@@ -214,7 +214,7 @@ public class AppLayer implements Layer {
 
                     ImGui.sameLine();
 
-                    if (ImGui.button("B")) {
+                    if (ImGui.button("B##1")) {
                         if (displayItems != null) {
                             PMXFileDisplayFrame frame = displayItems.get(displayIndex);
                             displayItems.remove(frame);
@@ -324,7 +324,17 @@ public class AppLayer implements Layer {
                     }
 
                     ImGui.sameLine();
-                    ImGui.button("B");
+
+                    if (ImGui.button("B##2")) {
+                        if (frameItems != null) {
+                            PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
+                            frameItems.remove(frame);
+                            frameItems.add(frame);
+                            frameItemIndex = frameItems.size() - 1;
+                            scrollFrameItems = true;
+                        }
+                    }
+
                     ImGui.sameLine();
                     ImGui.button("+");
                     ImGui.sameLine();
