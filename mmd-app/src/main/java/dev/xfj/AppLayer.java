@@ -143,6 +143,7 @@ public class AppLayer implements Layer {
                 ImGui.endTabItem();
             }
             boolean displayDeleted = false;
+            boolean frameDeleted = false;
 
             if (ImGui.beginTabItem("Display")) {
                 if (ImGui.beginTable("##table1", 3, tableFlags)) {
@@ -230,7 +231,7 @@ public class AppLayer implements Layer {
 
                     ImGui.beginDisabled(displayItems != null && displayItems.get(displayIndex).getSpecialFlag() == 1);
 
-                    if (ImGui.button("x")) {
+                    if (ImGui.button("x##1")) {
                         displayDeleted = true;
                     }
 
@@ -338,9 +339,23 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
                     ImGui.button("+");
                     ImGui.sameLine();
-                    ImGui.button("x");
+
+                    if (ImGui.button("x##2")) {
+                        frameDeleted = true;
+                    }
+
 
                     ImGui.endTable();
+
+                    if (frameDeleted) {
+                        displayItems.get(displayIndex).setFrameCount(displayItems.get(displayIndex).getFrameCount() - 1);
+                        displayItems.get(displayIndex).getFrames().remove(frameItemIndex);
+                        frameItemIndex--;
+
+                        if (frameItemIndex < 0) {
+                            frameItemIndex = 0;
+                        }
+                    }
 
                     if (displayDeleted) {
                         pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrameCount() - 1);
