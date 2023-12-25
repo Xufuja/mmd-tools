@@ -358,6 +358,9 @@ public class AppLayer implements Layer {
                     }
 
                     if (displayDeleted) {
+                        displayItems.get(displayIndex).getFrames().removeAll(displayItems.get(displayIndex).getFrames());
+                        displayItems.get(displayIndex).setFrameCount(0);
+
                         pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrameCount() - 1);
                         pmxFile.getDisplayFrames().remove(displayIndex);
                         displayIndex--;
