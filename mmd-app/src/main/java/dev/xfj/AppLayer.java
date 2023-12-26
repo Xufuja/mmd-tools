@@ -337,7 +337,14 @@ public class AppLayer implements Layer {
                     }
 
                     ImGui.sameLine();
-                    ImGui.button("+");
+
+                    //Never seems to be enabled
+                    ImGui.beginDisabled(true);
+
+                    ImGui.button("+##2");
+
+                    ImGui.endDisabled();
+
                     ImGui.sameLine();
 
                     if (ImGui.button("x##2")) {
