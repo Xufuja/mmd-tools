@@ -226,7 +226,24 @@ public class AppLayer implements Layer {
                     }
 
                     ImGui.sameLine();
-                    ImGui.button("+");
+
+                    if (ImGui.button("+##1")) {
+                        if (displayItems != null) {
+                            pmxFile.setDisplayFrameCount(displayItems.size() + 1);
+
+                            PMXFileDisplayFrame displayFrame = new PMXFileDisplayFrame();
+                            displayFrame.setDisplayFrameNameJapanese("New Object");
+                            displayFrame.setDisplayFrameNameEnglish("New Object");
+                            displayFrame.setSpecialFlag((byte) 0);
+                            displayFrame.setFrameCount(0);
+
+                            displayItems.add(displayFrame);
+
+                            displayIndex = displayItems.size() - 1;;
+                            scrollDisplayItems = true;
+                        }
+                    }
+
                     ImGui.sameLine();
 
                     ImGui.beginDisabled(displayItems != null && displayItems.get(displayIndex).getSpecialFlag() == 1);
@@ -340,9 +357,7 @@ public class AppLayer implements Layer {
 
                     //Never seems to be enabled
                     ImGui.beginDisabled(true);
-
                     ImGui.button("+##2");
-
                     ImGui.endDisabled();
 
                     ImGui.sameLine();
