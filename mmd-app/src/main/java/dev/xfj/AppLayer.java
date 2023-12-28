@@ -239,7 +239,8 @@ public class AppLayer implements Layer {
 
                             displayItems.add(displayFrame);
 
-                            displayIndex = displayItems.size() - 1;;
+                            displayIndex = displayItems.size() - 1;
+                            ;
                             scrollDisplayItems = true;
                         }
                     }
@@ -369,26 +370,28 @@ public class AppLayer implements Layer {
 
                     ImGui.endTable();
 
-                    if (frameDeleted) {
-                        displayItems.get(displayIndex).setFrameCount(displayItems.get(displayIndex).getFrameCount() - 1);
-                        displayItems.get(displayIndex).getFrames().remove(frameItemIndex);
-                        frameItemIndex--;
+                    if (displayItems != null) {
+                        if (frameDeleted) {
+                            displayItems.get(displayIndex).setFrameCount(displayItems.get(displayIndex).getFrameCount() - 1);
+                            displayItems.get(displayIndex).getFrames().remove(frameItemIndex);
+                            frameItemIndex--;
 
-                        if (frameItemIndex < 0) {
-                            frameItemIndex = 0;
+                            if (frameItemIndex < 0) {
+                                frameItemIndex = 0;
+                            }
                         }
-                    }
 
-                    if (displayDeleted) {
-                        displayItems.get(displayIndex).getFrames().removeAll(displayItems.get(displayIndex).getFrames());
-                        displayItems.get(displayIndex).setFrameCount(0);
+                        if (displayDeleted) {
+                            displayItems.get(displayIndex).getFrames().removeAll(displayItems.get(displayIndex).getFrames());
+                            displayItems.get(displayIndex).setFrameCount(0);
 
-                        pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrameCount() - 1);
-                        pmxFile.getDisplayFrames().remove(displayIndex);
-                        displayIndex--;
+                            pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrameCount() - 1);
+                            pmxFile.getDisplayFrames().remove(displayIndex);
+                            displayIndex--;
 
-                        if (displayIndex < 0) {
-                            displayIndex = 0;
+                            if (displayIndex < 0) {
+                                displayIndex = 0;
+                            }
                         }
                     }
                 }
