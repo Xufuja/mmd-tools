@@ -19,6 +19,7 @@ import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImString;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -150,16 +151,38 @@ public class AppLayer implements Layer {
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
 
+                    List<PMXFileDisplayFrame> displayItems = new ArrayList<>();
+
+                    if (pmxFile.getDisplayFrames() != null) {
+                        displayItems = pmxFile.getDisplayFrames();
+                    } else {
+                        PMXFileDisplayFrame displayFrame = new PMXFileDisplayFrame();
+                        displayFrame.setDisplayFrameNameJapanese("Root");
+                        displayFrame.setDisplayFrameNameEnglish("Root");
+                        displayFrame.setSpecialFlag((byte) 1);
+                        displayFrame.setFrameCount(0);
+
+                        displayItems.add(displayFrame);
+
+                        displayFrame = new PMXFileDisplayFrame();
+                        displayFrame.setDisplayFrameNameJapanese("表情");
+                        displayFrame.setDisplayFrameNameEnglish("Exp");
+                        displayFrame.setSpecialFlag((byte) 1);
+                        displayFrame.setFrameCount(0);
+
+                        displayItems.add(displayFrame);
+
+                        pmxFile.setDisplayFrameCount(displayItems.size());
+                    }
+
                     ImGui.inputText("##common", new ImString(String.valueOf(displayIndex)));
                     //ImGui.sameLine();
                     //ImGui.inputText("##displayframe", new ImString(), ImGuiInputTextFlags.ReadOnly);
                     ImGui.sameLine();
                     ImGui.text(String.valueOf(pmxFile.getDisplayFrameCount()));
 
-                    List<PMXFileDisplayFrame> displayItems = pmxFile.getDisplayFrames();
-
                     if (ImGui.beginListBox("##listbox 1")) {
-                        for (int n = 0; displayItems != null && n < pmxFile.getDisplayFrameCount(); n++) {
+                        for (int n = 0; n < pmxFile.getDisplayFrameCount(); n++) {
                             boolean isSelected = (displayIndex == n);
 
                             if (ImGui.selectable(displayItems.get(n).getDisplayFrameNameJapanese(), isSelected)) {
@@ -171,28 +194,28 @@ public class AppLayer implements Layer {
                             }
                         }
 
-                        if (displayItems != null && scrollDisplayItems) {
-                            ImGui.setScrollY(normalize(displayIndex, 0, displayItems.size() - 1, 0, (int) ImGui.getScrollMaxY()));
-                            scrollDisplayItems = false;
+                        if (scrollDisplayItems) {
+                            if (displayItems.size() > 1) {
+                                ImGui.setScrollY(normalize(displayIndex, 0, displayItems.size() - 1, 0, (int) ImGui.getScrollMaxY()));
+                                scrollDisplayItems = false;
+                            }
                         }
 
                         ImGui.endListBox();
                     }
 
                     if (ImGui.button("T##1")) {
-                        if (displayItems != null) {
-                            PMXFileDisplayFrame frame = displayItems.get(displayIndex);
-                            displayItems.remove(frame);
-                            displayItems.add(0, frame);
-                            displayIndex = 0;
-                            scrollDisplayItems = true;
-                        }
+                        PMXFileDisplayFrame frame = displayItems.get(displayIndex);
+                        displayItems.remove(frame);
+                        displayItems.add(0, frame);
+                        displayIndex = 0;
+                        scrollDisplayItems = true;
                     }
 
                     ImGui.sameLine();
 
                     if (ImGui.button("^##1")) {
-                        if (displayItems != null && displayItems.size() > 1) {
+                        if (displayItems.size() > 1) {
                             if (displayIndex - 1 > -1) {
                                 Collections.swap(displayItems, displayIndex, displayIndex - 1);
                                 displayIndex = displayIndex - 1;
@@ -204,7 +227,7 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
 
                     if (ImGui.button("v##1")) {
-                        if (displayItems != null && displayItems.size() > 1) {
+                        if (displayItems.size() > 1) {
                             if (displayIndex + 1 < displayItems.size()) {
                                 Collections.swap(displayItems, displayIndex, displayIndex + 1);
                                 displayIndex = displayIndex + 1;
@@ -216,44 +239,41 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
 
                     if (ImGui.button("B##1")) {
-                        if (displayItems != null) {
-                            PMXFileDisplayFrame frame = displayItems.get(displayIndex);
-                            displayItems.remove(frame);
-                            displayItems.add(frame);
-                            displayIndex = displayItems.size() - 1;
-                            scrollDisplayItems = true;
-                        }
+                        PMXFileDisplayFrame frame = displayItems.get(displayIndex);
+                        displayItems.remove(frame);
+                        displayItems.add(frame);
+                        displayIndex = displayItems.size() - 1;
+                        scrollDisplayItems = true;
                     }
 
                     ImGui.sameLine();
 
                     if (ImGui.button("+##1")) {
-                        if (displayItems != null) {
-                            pmxFile.setDisplayFrameCount(displayItems.size() + 1);
+                        pmxFile.setDisplayFrameCount(displayItems.size() + 1);
 
-                            PMXFileDisplayFrame displayFrame = new PMXFileDisplayFrame();
-                            displayFrame.setDisplayFrameNameJapanese("New Object");
-                            displayFrame.setDisplayFrameNameEnglish("New Object");
-                            displayFrame.setSpecialFlag((byte) 0);
-                            displayFrame.setFrameCount(0);
+                        PMXFileDisplayFrame frame = new PMXFileDisplayFrame();
+                        frame.setDisplayFrameNameJapanese("New Object");
+                        frame.setDisplayFrameNameEnglish("New Object");
+                        frame.setSpecialFlag((byte) 0);
+                        frame.setFrameCount(0);
 
-                            displayItems.add(displayFrame);
+                        displayItems.add(frame);
 
-                            displayIndex = displayItems.size() - 1;
-                            ;
-                            scrollDisplayItems = true;
-                        }
+                        displayIndex = displayItems.size() - 1;
+                        scrollDisplayItems = true;
                     }
 
                     ImGui.sameLine();
 
-                    ImGui.beginDisabled(displayItems != null && displayItems.get(displayIndex).getSpecialFlag() == 1);
+                    ImGui.beginDisabled(displayItems.get(displayIndex).getSpecialFlag() == 1);
 
                     if (ImGui.button("x##1")) {
                         displayDeleted = true;
                     }
 
                     ImGui.endDisabled();
+
+                    pmxFile.setDisplayFrames(displayItems);
 
                     ImGui.sameLine();
 
@@ -268,18 +288,18 @@ public class AppLayer implements Layer {
 
                     ImGui.text("Name");
                     ImGui.sameLine();
-                    ImGui.inputText("##displayselected", displayItems != null ? english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()) : new ImString(""), ImGuiInputTextFlags.ReadOnly);
+                    ImGui.inputText("##displayselected", english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()), ImGuiInputTextFlags.ReadOnly);
                     ImGui.sameLine();
-                    ImGui.text(displayItems != null && displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
-                    List<PMXFileDisplayFrameData> frameItems = displayItems != null ? displayItems.get(displayIndex).getFrames() : null;
+                    ImGui.text(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
+                    List<PMXFileDisplayFrameData> frameItems = displayItems.get(displayIndex).getFrames();
 
                     ImGui.inputText("##subindex", new ImString(String.valueOf(frameItemIndex)), ImGuiInputTextFlags.ReadOnly);
 
                     ImGui.sameLine();
-                    ImGui.text(displayItems != null ? String.valueOf(displayItems.get(displayIndex).getFrameCount()) : "");
+                    ImGui.text(String.valueOf(displayItems.get(displayIndex).getFrameCount()));
 
                     if (ImGui.beginListBox("##listbox 2")) {
-                        for (int n = 0; displayItems != null && n < displayItems.get(displayIndex).getFrameCount(); n++) {
+                        for (int n = 0; n < displayItems.get(displayIndex).getFrameCount(); n++) {
                             boolean isSelected = (frameItemIndex == n);
 
                             String name = switch (frameItems.get(n).getFrameType()) {
@@ -370,8 +390,9 @@ public class AppLayer implements Layer {
 
                     ImGui.endTable();
 
-                    if (displayItems != null) {
-                        if (frameDeleted) {
+
+                    if (frameDeleted) {
+                        if (frameItems != null) {
                             displayItems.get(displayIndex).setFrameCount(displayItems.get(displayIndex).getFrameCount() - 1);
                             displayItems.get(displayIndex).getFrames().remove(frameItemIndex);
                             frameItemIndex--;
@@ -380,19 +401,22 @@ public class AppLayer implements Layer {
                                 frameItemIndex = 0;
                             }
                         }
+                    }
 
-                        if (displayDeleted) {
+                    if (displayDeleted) {
+                        if (frameItems != null) {
                             displayItems.get(displayIndex).getFrames().removeAll(displayItems.get(displayIndex).getFrames());
                             displayItems.get(displayIndex).setFrameCount(0);
-
-                            pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrameCount() - 1);
-                            pmxFile.getDisplayFrames().remove(displayIndex);
-                            displayIndex--;
-
-                            if (displayIndex < 0) {
-                                displayIndex = 0;
-                            }
                         }
+
+                        pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrameCount() - 1);
+                        pmxFile.getDisplayFrames().remove(displayIndex);
+                        displayIndex--;
+
+                        if (displayIndex < 0) {
+                            displayIndex = 0;
+                        }
+
                     }
                 }
 
