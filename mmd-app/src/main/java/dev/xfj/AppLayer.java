@@ -291,7 +291,11 @@ public class AppLayer implements Layer {
                     ImGui.inputText("##displayselected", english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()), ImGuiInputTextFlags.ReadOnly);
                     ImGui.sameLine();
                     ImGui.text(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
-                    List<PMXFileDisplayFrameData> frameItems = displayItems.get(displayIndex).getFrames();
+                    List<PMXFileDisplayFrameData> frameItems = new ArrayList<>();
+
+                    if (displayItems.get(displayIndex).getFrames() != null) {
+                        frameItems = displayItems.get(displayIndex).getFrames();
+                    }
 
                     ImGui.inputText("##subindex", new ImString(String.valueOf(frameItemIndex)), ImGuiInputTextFlags.ReadOnly);
 
@@ -329,7 +333,7 @@ public class AppLayer implements Layer {
                     }
 
                     if (ImGui.button("T##2")) {
-                        if (frameItems != null) {
+                        if (!frameItems.isEmpty()) {
                             PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
                             frameItems.remove(frame);
                             frameItems.add(0, frame);
@@ -341,7 +345,7 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
 
                     if (ImGui.button("^##2")) {
-                        if (frameItems != null && frameItems.size() > 1) {
+                        if (frameItems.size() > 1) {
                             if (frameItemIndex - 1 > -1) {
                                 Collections.swap(frameItems, frameItemIndex, frameItemIndex - 1);
                                 frameItemIndex = frameItemIndex - 1;
@@ -353,7 +357,7 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
 
                     if (ImGui.button("v##2")) {
-                        if (frameItems != null && frameItems.size() > 1) {
+                        if (frameItems.size() > 1) {
                             if (frameItemIndex + 1 < frameItems.size()) {
                                 Collections.swap(frameItems, frameItemIndex, frameItemIndex + 1);
                                 frameItemIndex = frameItemIndex + 1;
@@ -365,7 +369,7 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
 
                     if (ImGui.button("B##2")) {
-                        if (frameItems != null) {
+                        if (!frameItems.isEmpty()) {
                             PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
                             frameItems.remove(frame);
                             frameItems.add(frame);
@@ -392,7 +396,7 @@ public class AppLayer implements Layer {
 
 
                     if (frameDeleted) {
-                        if (frameItems != null) {
+                        if (!frameItems.isEmpty()) {
                             displayItems.get(displayIndex).setFrameCount(displayItems.get(displayIndex).getFrameCount() - 1);
                             displayItems.get(displayIndex).getFrames().remove(frameItemIndex);
                             frameItemIndex--;
@@ -404,7 +408,7 @@ public class AppLayer implements Layer {
                     }
 
                     if (displayDeleted) {
-                        if (frameItems != null) {
+                        if (!frameItems.isEmpty()) {
                             displayItems.get(displayIndex).getFrames().removeAll(displayItems.get(displayIndex).getFrames());
                             displayItems.get(displayIndex).setFrameCount(0);
                         }
