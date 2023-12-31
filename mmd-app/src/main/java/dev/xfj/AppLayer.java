@@ -30,6 +30,7 @@ public class AppLayer implements Layer {
     private int frameItemIndex = 0;
     private PMXFile pmxFile;
     private boolean english;
+    private boolean specialDelete;
     private boolean scrollDisplayItems;
     private boolean scrollFrameItems;
 
@@ -37,6 +38,7 @@ public class AppLayer implements Layer {
     public void onAttach() {
         pmxFile = new PMXFile();
         english = false;
+        specialDelete = false;
         scrollDisplayItems = false;
         scrollFrameItems = false;
     }
@@ -74,10 +76,10 @@ public class AppLayer implements Layer {
         }
 
 
-        int tab_bar_flags = ImGuiTabBarFlags.None;
+        int tabBarFlags = ImGuiTabBarFlags.None;
         int tableFlags = ImGuiTableFlags.None;
 
-        if (ImGui.beginTabBar("##tabbar", tab_bar_flags)) {
+        if (ImGui.beginTabBar("##tabbar", tabBarFlags)) {
             if (ImGui.beginTabItem("Info")) {
                 ImGui.text("System");
                 ImGui.separator();
@@ -143,6 +145,7 @@ public class AppLayer implements Layer {
                 }
                 ImGui.endTabItem();
             }
+
             boolean displayDeleted = false;
             boolean frameDeleted = false;
 
@@ -265,13 +268,19 @@ public class AppLayer implements Layer {
 
                     ImGui.sameLine();
 
-                    ImGui.beginDisabled(displayItems.get(displayIndex).getSpecialFlag() == 1);
+                    ImGui.beginDisabled(displayItems.get(displayIndex).getSpecialFlag() == 1 && !specialDelete);
 
                     if (ImGui.button("x##1")) {
                         displayDeleted = true;
                     }
 
                     ImGui.endDisabled();
+
+                    ImGui.sameLine();
+
+                    if (ImGui.checkbox("Allow special frame deletion", specialDelete)) {
+                        specialDelete = !specialDelete;
+                    }
 
                     pmxFile.setDisplayFrames(displayItems);
 
@@ -391,9 +400,7 @@ public class AppLayer implements Layer {
                         frameDeleted = true;
                     }
 
-
                     ImGui.endTable();
-
 
                     if (frameDeleted) {
                         if (!frameItems.isEmpty()) {
