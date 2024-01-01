@@ -132,6 +132,8 @@ public class Application {
             imGuiStyle.setColors(colors);
         }
 
+        setDarkThemeColors();
+
         final ImFontConfig fontConfig = new ImFontConfig();
         fontConfig.setFontDataOwnedByAtlas(false);
 
@@ -139,10 +141,42 @@ public class Application {
                 io.getFonts().addFontFromFileTTF("assets/fonts/roboto/Roboto-Regular.ttf", 20),
                 io.getFonts().addFontFromFileTTF("assets/fonts/notosansjp/static/NotoSansJP-Medium.ttf", 20, io.getFonts().getGlyphRangesJapanese())
         };
+
         io.setFontDefault(fonts[1]);
 
         imGuiGlfw.init(windowHandle, true);
         imGuiGl3.init("#version 450");
+    }
+
+    public void setDarkThemeColors() {
+        ImGuiStyle style = ImGui.getStyle();
+
+        float[][] colors = style.getColors();
+        colors[ImGuiCol.WindowBg] = new float[]{0.1f, 0.105f, 0.11f, 1.0f};
+
+        colors[ImGuiCol.Header] = new float[]{0.2f, 0.205f, 0.21f, 1.0f};
+        colors[ImGuiCol.HeaderHovered] = new float[]{0.3f, 0.305f, 0.31f, 1.0f};
+        colors[ImGuiCol.HeaderActive] = new float[]{0.15f, 0.1505f, 0.151f, 1.0f};
+
+        colors[ImGuiCol.Button] = new float[]{0.2f, 0.205f, 0.21f, 1.0f};
+        colors[ImGuiCol.ButtonHovered] = new float[]{0.3f, 0.305f, 0.31f, 1.0f};
+        colors[ImGuiCol.ButtonActive] = new float[]{0.15f, 0.1505f, 0.151f, 1.0f};
+
+        colors[ImGuiCol.FrameBg] = new float[]{0.2f, 0.205f, 0.21f, 1.0f};
+        colors[ImGuiCol.FrameBgHovered] = new float[]{0.3f, 0.305f, 0.31f, 1.0f};
+        colors[ImGuiCol.FrameBgActive] = new float[]{0.15f, 0.1505f, 0.151f, 1.0f};
+
+        colors[ImGuiCol.Tab] = new float[]{0.15f, 0.1505f, 0.151f, 1.0f};
+        colors[ImGuiCol.TabHovered] = new float[]{0.38f, 0.3805f, 0.381f, 1.0f};
+        colors[ImGuiCol.TabActive] = new float[]{0.28f, 0.2805f, 0.281f, 1.0f};
+        colors[ImGuiCol.TabUnfocused] = new float[]{0.15f, 0.1505f, 0.151f, 1.0f};
+        colors[ImGuiCol.TabUnfocusedActive] = new float[]{0.2f, 0.205f, 0.21f, 1.0f};
+
+        colors[ImGuiCol.TitleBg] = new float[]{0.15f, 0.1505f, 0.151f, 1.0f};
+        colors[ImGuiCol.TitleBgActive] = new float[]{0.15f, 0.1505f, 0.151f, 1.0f};
+        colors[ImGuiCol.TitleBgCollapsed] = new float[]{0.15f, 0.1505f, 0.151f, 1.0f};
+
+        style.setColors(colors);
     }
 
     public void run() {
@@ -161,9 +195,9 @@ public class Application {
             imGuiGlfw.newFrame();
             ImGui.newFrame();
 
-            int window_flags = ImGuiWindowFlags.NoDocking;
+            int windowFlags = ImGuiWindowFlags.NoDocking;
 
-            window_flags |= ImGuiWindowFlags.MenuBar;
+            windowFlags |= ImGuiWindowFlags.MenuBar;
 
             ImGuiViewport viewport = ImGui.getMainViewport();
             ImGui.setNextWindowPos(viewport.getWorkPosX(), viewport.getWorkPosY());
@@ -171,16 +205,16 @@ public class Application {
             ImGui.setNextWindowViewport(viewport.getID());
             ImGui.pushStyleVar(ImGuiStyleVar.WindowRounding, 0.0f);
             ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.0f);
-            window_flags |= ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
-            window_flags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus;
+            windowFlags |= ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
+            windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus;
 
 
             if ((dockspace_flags & ImGuiDockNodeFlags.PassthruCentralNode) != 0) {
-                window_flags |= ImGuiWindowFlags.NoBackground;
+                windowFlags |= ImGuiWindowFlags.NoBackground;
             }
 
             ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0.0f, 0.0f);
-            ImGui.begin("DockSpace Demo", new ImBoolean(true), window_flags);
+            ImGui.begin("DockSpace Demo", new ImBoolean(true), windowFlags);
             ImGui.popStyleVar();
 
             ImGui.popStyleVar(2);
