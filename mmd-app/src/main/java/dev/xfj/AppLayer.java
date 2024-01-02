@@ -12,10 +12,8 @@ import dev.xfj.input.KeyCodes;
 import dev.xfj.parsing.PMXParser;
 import dev.xfj.writer.PMXWriter;
 import imgui.ImGui;
-import imgui.flag.ImGuiComboFlags;
-import imgui.flag.ImGuiInputTextFlags;
-import imgui.flag.ImGuiTabBarFlags;
-import imgui.flag.ImGuiTableFlags;
+import imgui.ImVec2;
+import imgui.flag.*;
 import imgui.type.ImString;
 
 import java.nio.file.Path;
@@ -77,68 +75,60 @@ public class AppLayer implements Layer {
 
 
         int tabBarFlags = ImGuiTabBarFlags.None;
-        int tableFlags = ImGuiTableFlags.None;
+        int tableFlags = ImGuiTableFlags.BordersOuter;
 
         if (ImGui.beginTabBar("##tabbar", tabBarFlags)) {
             if (ImGui.beginTabItem("Info")) {
                 ImGui.text("System");
-                ImGui.separator();
 
                 if (ImGui.beginTable("##table1", 6, tableFlags)) {
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
+
                     ImGui.text("PMX Version");
                     ImGui.tableSetColumnIndex(1);
                     ImGui.text(String.valueOf(pmxFile.getVersion()));
                     ImGui.tableSetColumnIndex(2);
                     ImGui.text("Encoding");
                     ImGui.tableSetColumnIndex(3);
-
+                    ImGui.setNextItemWidth(-1);
                     ImGui.inputText("##locale", pmxFile.getGlobals() != null ? new ImString(pmxFile.getGlobals().getTextEncoding() == 1 ? "UTF8" : "UTF16-LE") : new ImString(""), ImGuiInputTextFlags.ReadOnly);
 
                     ImGui.tableSetColumnIndex(4);
                     ImGui.text("UV Number");
+
                     ImGui.tableSetColumnIndex(5);
+                    ImGui.setNextItemWidth(-1);
+                    ImGui.inputText("##uv", pmxFile.getGlobals() != null ? new ImString(pmxFile.getGlobals().getAdditionalVec4Count()) : new ImString("0"), ImGuiInputTextFlags.ReadOnly);
 
-                    String[] uvItems = {"1", "2", "3", "4"};
-
-                    if (ImGui.beginCombo("##combo 2", uvItems[uvIndex], ImGuiComboFlags.None)) {
-                        for (int n = 0; n < uvItems.length; n++) {
-                            boolean isSelected = (uvIndex == n);
-
-                            if (ImGui.selectable(uvItems[n], isSelected)) {
-                                uvIndex = n;
-                            }
-
-                            if (isSelected) {
-                                ImGui.setItemDefaultFocus();
-                            }
-                        }
-                        ImGui.endCombo();
-                    }
                     ImGui.endTable();
                 }
 
                 ImGui.text("Model");
-                ImGui.separator();
 
                 if (ImGui.beginTable("##table2", 2, tableFlags)) {
+                    ImGui.tableSetupColumn("label", ImGuiTableColumnFlags.WidthFixed);
+                    ImGui.tableSetupColumn("data", ImGuiTableColumnFlags.WidthStretch);
+
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
                     ImGui.text("Name");
+
                     ImGui.tableSetColumnIndex(1);
+                    ImGui.setNextItemWidth(ImGui.getContentRegionAvail().x - 85);
                     ImGui.inputText("##input1", english ? new ImString(pmxFile.getModelNameEnglish()) : new ImString(pmxFile.getModelNameJapanese()), ImGuiInputTextFlags.ReadOnly);
+
                     ImGui.sameLine();
 
                     if (ImGui.checkbox("English", english)) {
                         english = !english;
                     }
 
-
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
                     ImGui.text("Comment");
                     ImGui.tableSetColumnIndex(1);
+                    ImGui.setNextItemWidth(-1);
                     ImGui.inputTextMultiline("##input2", english ? new ImString(pmxFile.getCommentsEnglish()) : new ImString(pmxFile.getCommentsJapanese()), ImGuiInputTextFlags.ReadOnly);
 
                     ImGui.endTable();
@@ -146,11 +136,12 @@ public class AppLayer implements Layer {
                 ImGui.endTabItem();
             }
 
+
             boolean displayDeleted = false;
             boolean frameDeleted = false;
 
             if (ImGui.beginTabItem("Display")) {
-                if (ImGui.beginTable("##table1", 3, tableFlags)) {
+                if (ImGui.beginTable("##table2", 2, tableFlags)) {
                     ImGui.tableNextRow();
                     ImGui.tableSetColumnIndex(0);
 
@@ -276,8 +267,6 @@ public class AppLayer implements Layer {
 
                     ImGui.endDisabled();
 
-                    ImGui.sameLine();
-
                     if (ImGui.checkbox("Allow special frame deletion", specialDelete)) {
                         specialDelete = !specialDelete;
                     }
@@ -299,7 +288,7 @@ public class AppLayer implements Layer {
                     ImGui.sameLine();
                     ImGui.inputText("##displayselected", english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()), ImGuiInputTextFlags.ReadOnly);
                     ImGui.sameLine();
-                    ImGui.text(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special frame" : "Normal frame");
+                    ImGui.text(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special" : "Normal");
                     List<PMXFileDisplayFrameData> frameItems = new ArrayList<>();
 
                     if (displayItems.get(displayIndex).getFrames() != null) {
