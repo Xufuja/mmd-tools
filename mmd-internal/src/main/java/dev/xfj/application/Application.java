@@ -13,6 +13,7 @@ import imgui.flag.*;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.type.ImBoolean;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL45;
@@ -65,7 +66,23 @@ public class Application {
                 }
             });
         }
+
+        PointerBuffer monitors = glfwGetMonitors();
+        GLFWVidMode videoMode = glfwGetVideoMode(monitors.get(0));
+
+        int[] monitorX = new int[1];
+        int[] monitorY = new int[1];
+        glfwGetMonitorPos(monitors.get(0), monitorX, monitorY);
+
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
         windowHandle = glfwCreateWindow(specification.width, specification.height, specification.name, NULL, NULL);
+
+        glfwDefaultWindowHints();
+
+        glfwSetWindowPos(windowHandle, monitorX[0] + (videoMode.width() - specification.width) / 2, monitorY[0] + (videoMode.height() - specification.height) / 2);
+        glfwShowWindow(windowHandle);
+
         eventCallback = this::onEvent;
 
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 4);
