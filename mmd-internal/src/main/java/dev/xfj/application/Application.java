@@ -78,6 +78,8 @@ public class Application {
 
         windowHandle = glfwCreateWindow(specification.width, specification.height, specification.name, NULL, NULL);
 
+        glfwSetWindowSizeLimits(windowHandle, specification.width, specification.height, specification.width, specification.height);
+
         glfwDefaultWindowHints();
 
         glfwSetWindowPos(windowHandle, monitorX[0] + (videoMode.width() - specification.width) / 2, monitorY[0] + (videoMode.height() - specification.height) / 2);
