@@ -5,7 +5,9 @@ import dev.xfj.format.pmx.PMXFile;
 import dev.xfj.format.pmx.PMXFileDisplayFrame;
 import dev.xfj.format.pmx.PMXFileDisplayFrameData;
 import imgui.ImGui;
+import imgui.ImVec2;
 import imgui.flag.ImGuiInputTextFlags;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImString;
 
@@ -97,7 +99,13 @@ public class DisplayTab {
                     ImGui.endListBox();
                 }
 
-                if (ImGui.button("T##1")) {
+                ImGui.pushItemWidth(ImGui.calcItemWidth() / 6);
+                ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 10);
+
+                float lineHeight = ImGui.getFont().getFontSize() + ImGui.getStyle().getFramePaddingY() * 2.0f;
+                ImVec2 buttonSize = new ImVec2(lineHeight + 3.0f, lineHeight);
+
+                if (ImGui.button("T##1", buttonSize.x, buttonSize.y)) {
                     PMXFileDisplayFrame frame = displayItems.get(displayIndex);
                     displayItems.remove(frame);
                     displayItems.add(0, frame);
@@ -107,7 +115,7 @@ public class DisplayTab {
 
                 ImGui.sameLine();
 
-                if (ImGui.button("^##1")) {
+                if (ImGui.button("^##1", buttonSize.x, buttonSize.y)) {
                     if (displayItems.size() > 1) {
                         if (displayIndex - 1 > -1) {
                             Collections.swap(displayItems, displayIndex, displayIndex - 1);
@@ -119,7 +127,7 @@ public class DisplayTab {
 
                 ImGui.sameLine();
 
-                if (ImGui.button("V##1")) {
+                if (ImGui.button("v##1", buttonSize.x, buttonSize.y)) {
                     if (displayItems.size() > 1) {
                         if (displayIndex + 1 < displayItems.size()) {
                             Collections.swap(displayItems, displayIndex, displayIndex + 1);
@@ -131,7 +139,7 @@ public class DisplayTab {
 
                 ImGui.sameLine();
 
-                if (ImGui.button("B##1")) {
+                if (ImGui.button("B##1", buttonSize.x, buttonSize.y)) {
                     PMXFileDisplayFrame frame = displayItems.get(displayIndex);
                     displayItems.remove(frame);
                     displayItems.add(frame);
@@ -141,7 +149,7 @@ public class DisplayTab {
 
                 ImGui.sameLine();
 
-                if (ImGui.button("+##1")) {
+                if (ImGui.button("+##1", buttonSize.x, buttonSize.y)) {
                     pmxFile.setDisplayFrameCount(displayItems.size() + 1);
 
                     PMXFileDisplayFrame frame = new PMXFileDisplayFrame();
@@ -160,11 +168,15 @@ public class DisplayTab {
 
                 ImGui.beginDisabled(displayItems.get(displayIndex).getSpecialFlag() == 1 && !specialDelete);
 
-                if (ImGui.button("X##1")) {
+                if (ImGui.button("x##1", buttonSize.x, buttonSize.y)) {
                     displayDeleted = true;
                 }
 
                 ImGui.endDisabled();
+
+                ImGui.popItemWidth();
+
+                ImGui.popStyleVar();
 
                 if (ImGui.checkbox("Allow special frame deletion", specialDelete)) {
                     specialDelete = !specialDelete;
@@ -229,7 +241,11 @@ public class DisplayTab {
                     ImGui.endListBox();
                 }
 
-                if (ImGui.button("T##2")) {
+                ImGui.pushItemWidth(ImGui.calcItemWidth() / 6);
+                ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 10);
+
+
+                if (ImGui.button("T##2", buttonSize.x, buttonSize.y)) {
                     if (!frameItems.isEmpty()) {
                         PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
                         frameItems.remove(frame);
@@ -241,7 +257,7 @@ public class DisplayTab {
 
                 ImGui.sameLine();
 
-                if (ImGui.button("^##2")) {
+                if (ImGui.button("^##2", buttonSize.x, buttonSize.y)) {
                     if (frameItems.size() > 1) {
                         if (frameItemIndex - 1 > -1) {
                             Collections.swap(frameItems, frameItemIndex, frameItemIndex - 1);
@@ -253,7 +269,7 @@ public class DisplayTab {
 
                 ImGui.sameLine();
 
-                if (ImGui.button("V##2")) {
+                if (ImGui.button("v##2", buttonSize.x, buttonSize.y)) {
                     if (frameItems.size() > 1) {
                         if (frameItemIndex + 1 < frameItems.size()) {
                             Collections.swap(frameItems, frameItemIndex, frameItemIndex + 1);
@@ -279,14 +295,18 @@ public class DisplayTab {
 
                 //Never seems to be enabled
                 ImGui.beginDisabled(true);
-                ImGui.button("+##2");
+                ImGui.button("+##2", buttonSize.x, buttonSize.y);
                 ImGui.endDisabled();
 
                 ImGui.sameLine();
 
-                if (ImGui.button("X##2")) {
+                if (ImGui.button("x##2", buttonSize.x, buttonSize.y)) {
                     frameDeleted = true;
                 }
+
+                ImGui.popItemWidth();
+
+                ImGui.popStyleVar();
 
                 ImGui.endTable();
 
