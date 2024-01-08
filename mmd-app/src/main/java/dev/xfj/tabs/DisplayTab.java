@@ -69,13 +69,27 @@ public class DisplayTab {
                     pmxFile.setDisplayFrameCount(displayItems.size());
                 }
 
-                ImGui.text("Common");
-                ImGui.inputText("##Common", new ImString(String.valueOf(displayIndex)));
-                //ImGui.sameLine();
-                //ImGui.inputText("##displayframe", new ImString(), ImGuiInputTextFlags.ReadOnly);
-                ImGui.sameLine();
-                ImGui.text(String.valueOf(pmxFile.getDisplayFrameCount()));
+                if (ImGui.beginTable("##SubDisplay", 2, ImGuiTableFlags.None)) {
+                    ImGui.tableNextRow();
 
+                    ImGui.tableSetColumnIndex(0);
+                    ImGui.text("Common");
+                    ImGui.tableSetColumnIndex(1);
+                    ImGui.text("Display Frame");
+
+                    ImGui.tableNextRow();
+                    ImGui.tableSetColumnIndex(0);
+
+                    ImGui.inputText("##Common", new ImString(String.valueOf(displayIndex)));
+                    ImGui.tableSetColumnIndex(1);
+                    ImGui.inputText("##DisplayFrame", new ImString(), ImGuiInputTextFlags.ReadOnly);
+
+                    ImGui.sameLine(ImGui.getContentRegionAvail().x - 15);
+                    ImGui.text(String.valueOf(pmxFile.getDisplayFrameCount()));
+                    ImGui.endTable();
+                }
+
+                ImGui.setNextItemWidth(-1);
                 if (ImGui.beginListBox("##DisplayFrameCount")) {
                     for (int n = 0; n < pmxFile.getDisplayFrameCount(); n++) {
                         boolean isSelected = (displayIndex == n);
@@ -100,10 +114,10 @@ public class DisplayTab {
                 }
 
                 ImGui.pushItemWidth(ImGui.calcItemWidth() / 6);
-                ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 10);
+                ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 5, 10);
 
                 float lineHeight = ImGui.getFont().getFontSize() + ImGui.getStyle().getFramePaddingY() * 2.0f;
-                ImVec2 buttonSize = new ImVec2(lineHeight + 3.0f, lineHeight);
+                ImVec2 buttonSize = new ImVec2(lineHeight + lineHeight, lineHeight);
 
                 if (ImGui.button("T##1", buttonSize.x, buttonSize.y)) {
                     PMXFileDisplayFrame frame = displayItems.get(displayIndex);
@@ -281,7 +295,7 @@ public class DisplayTab {
 
                 ImGui.sameLine();
 
-                if (ImGui.button("B##2")) {
+                if (ImGui.button("B##2", buttonSize.x, buttonSize.y)) {
                     if (!frameItems.isEmpty()) {
                         PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
                         frameItems.remove(frame);
