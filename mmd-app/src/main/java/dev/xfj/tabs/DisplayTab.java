@@ -82,7 +82,7 @@ public class DisplayTab {
 
                     ImGui.inputText("##Common", new ImString(String.valueOf(displayIndex)));
                     ImGui.tableSetColumnIndex(1);
-                    ImGui.inputText("##DisplayFrame", new ImString(), ImGuiInputTextFlags.ReadOnly);
+                    ImGui.inputText("##DisplayFrame", new ImString(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special" : "Normal"), ImGuiInputTextFlags.ReadOnly);
 
                     ImGui.sameLine(ImGui.getContentRegionAvail().x - 15);
                     ImGui.text(String.valueOf(pmxFile.getDisplayFrameCount()));
@@ -191,7 +191,7 @@ public class DisplayTab {
                 ImGui.popItemWidth();
 
                 ImGui.popStyleVar();
-
+                
                 if (ImGui.checkbox("Allow special frame deletion", specialDelete)) {
                     specialDelete = !specialDelete;
                 }
@@ -203,17 +203,17 @@ public class DisplayTab {
                 ImGui.tableSetColumnIndex(1);
 
                 ImGui.text("In-frame element");
+
+                ImGui.text("Name");
+                ImGui.sameLine();
+                ImGui.setNextItemWidth(ImGui.getContentRegionAvail().x - 85);
+                ImGui.inputText("##DisplaySelected", english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()), ImGuiInputTextFlags.ReadOnly);
                 ImGui.sameLine();
 
                 if (ImGui.checkbox("English", english)) {
                     english = !english;
                 }
 
-                ImGui.text("Name");
-                ImGui.sameLine();
-                ImGui.inputText("##DisplaySelected", english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()), ImGuiInputTextFlags.ReadOnly);
-                ImGui.sameLine();
-                ImGui.text(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special" : "Normal");
                 List<PMXFileDisplayFrameData> frameItems = new ArrayList<>();
 
                 if (displayItems.get(displayIndex).getFrames() != null) {
@@ -222,9 +222,11 @@ public class DisplayTab {
 
                 ImGui.inputText("##SubIndex", new ImString(String.valueOf(frameItemIndex)), ImGuiInputTextFlags.ReadOnly);
 
-                ImGui.sameLine();
+                ImGui.sameLine(ImGui.getContentRegionAvail().x - 15);
+
                 ImGui.text(String.valueOf(displayItems.get(displayIndex).getFrameCount()));
 
+                ImGui.setNextItemWidth(-1);
                 if (ImGui.beginListBox("##DisplayFrameData")) {
                     for (int n = 0; n < displayItems.get(displayIndex).getFrameCount(); n++) {
                         boolean isSelected = (frameItemIndex == n);
@@ -256,7 +258,7 @@ public class DisplayTab {
                 }
 
                 ImGui.pushItemWidth(ImGui.calcItemWidth() / 6);
-                ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 10);
+                ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 5, 10);
 
 
                 if (ImGui.button("T##2", buttonSize.x, buttonSize.y)) {
