@@ -191,7 +191,7 @@ public class DisplayTab {
                 ImGui.popItemWidth();
 
                 ImGui.popStyleVar();
-                
+
                 if (ImGui.checkbox("Allow special frame deletion", specialDelete)) {
                     specialDelete = !specialDelete;
                 }

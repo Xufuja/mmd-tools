@@ -16,6 +16,7 @@ public class InfoTab {
         this.layer = layer;
         this.english = false;
     }
+
     public void onImGuiRender() {
         PMXFile pmxFile = layer.getPmxFile();
         int tableFlags = ImGuiTableFlags.BordersOuter;
@@ -30,12 +31,12 @@ public class InfoTab {
                 ImGui.text("PMX Version");
                 ImGui.tableSetColumnIndex(1);
                 ImGui.alignTextToFramePadding();
-                ImGui.text(String.valueOf(pmxFile.getVersion()));
+                ImGui.text(pmxFile.getVersion() != null ? String.valueOf(pmxFile.getVersion()) : "");
                 ImGui.tableSetColumnIndex(2);
                 ImGui.text("Encoding");
                 ImGui.tableSetColumnIndex(3);
                 ImGui.setNextItemWidth(-1);
-                ImGui.inputText("##locale", pmxFile.getGlobals() != null ? new ImString(pmxFile.getGlobals().getTextEncoding() == 1 ? "UTF8" : "UTF16-LE") : new ImString(""), ImGuiInputTextFlags.ReadOnly);
+                ImGui.inputText("##Locale", pmxFile.getGlobals() != null ? new ImString(pmxFile.getGlobals().getTextEncoding() == 1 ? "UTF8" : "UTF16-LE") : new ImString(""), ImGuiInputTextFlags.ReadOnly);
 
                 ImGui.tableSetColumnIndex(4);
                 ImGui.text("UV Number");
@@ -59,7 +60,8 @@ public class InfoTab {
 
                 ImGui.tableSetColumnIndex(1);
                 ImGui.setNextItemWidth(ImGui.getContentRegionAvail().x - 85);
-                ImGui.inputText("##Name", english ? new ImString(pmxFile.getModelNameEnglish()) : new ImString(pmxFile.getModelNameJapanese()), ImGuiInputTextFlags.ReadOnly);
+                String name = english ? pmxFile.getModelNameEnglish() : pmxFile.getModelNameJapanese();
+                ImGui.inputText("##Name", new ImString(name != null ? name : ""), ImGuiInputTextFlags.ReadOnly);
 
                 ImGui.sameLine();
 
@@ -72,7 +74,8 @@ public class InfoTab {
                 ImGui.text("Comment");
                 ImGui.tableSetColumnIndex(1);
                 ImGui.setNextItemWidth(-1);
-                ImGui.inputTextMultiline("##Comment", english ? new ImString(pmxFile.getCommentsEnglish()) : new ImString(pmxFile.getCommentsJapanese()), ImGuiInputTextFlags.ReadOnly);
+                String comment = english ? pmxFile.getCommentsEnglish() : pmxFile.getCommentsJapanese();
+                ImGui.inputTextMultiline("##Comment", new ImString(comment != null ? comment : ""), ImGuiInputTextFlags.ReadOnly);
 
                 ImGui.endTable();
             }
