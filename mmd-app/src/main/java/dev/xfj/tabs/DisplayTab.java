@@ -230,13 +230,13 @@ public class DisplayTab {
                 if (ImGui.beginListBox("##DisplayFrameData")) {
                     for (int n = 0; n < displayItems.get(displayIndex).getFrameCount(); n++) {
                         boolean isSelected = (frameItemIndex == n);
-
                         String name = switch (frameItems.get(n).getFrameType()) {
                             case 0 ->
-                                    String.valueOf(n).concat(" : B".concat(frameItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBonenameEnglish().isEmpty() ? pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBonenameEnglish() : pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBoneNameJapanese())));
+                                    String.format("%1$s : B%2$s | %3$s", n, frameItems.get(n).getFrameData().getValue().toString(), english && !pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBonenameEnglish().isEmpty() ? pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBonenameEnglish() : pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBoneNameJapanese());
 
                             case 1 ->
-                                    String.valueOf(n).concat(" : M".concat(frameItems.get(n).getFrameData().getValue().toString().concat(" | ").concat(english && !pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameEnglish().isEmpty() ? pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameEnglish() : pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameJapanese())));
+                                    String.format("%1$s : M%2$s | %3$s", n, frameItems.get(n).getFrameData().getValue().toString(), english && !pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameEnglish().isEmpty() ? pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameEnglish() : pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameJapanese());
+
                             default -> throw new RuntimeException("Invalid Display Frame Type!");
                         };
 
@@ -259,8 +259,7 @@ public class DisplayTab {
 
                 ImGui.pushItemWidth(ImGui.calcItemWidth() / 6);
                 ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 5, 10);
-
-
+                
                 if (ImGui.button("T##2", buttonSize.x, buttonSize.y)) {
                     if (!frameItems.isEmpty()) {
                         PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
