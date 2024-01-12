@@ -232,7 +232,7 @@ public class DisplayTab {
                         boolean isSelected = (frameItemIndex == n);
                         String name = switch (frameItems.get(n).getFrameType()) {
                             case 0 ->
-                                    String.format("%1$s : B%2$s | %3$s", n, frameItems.get(n).getFrameData().getValue().toString(), english && !pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBonenameEnglish().isEmpty() ? pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBonenameEnglish() : pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBoneNameJapanese());
+                                    String.format("%1$s : B%2$s | %3$s", n, frameItems.get(n).getFrameData().getValue().toString(), english && !pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBoneNameEnglish().isEmpty() ? pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBoneNameEnglish() : pmxFile.getBones().get((short) frameItems.get(n).getFrameData().getValue()).getBoneNameJapanese());
 
                             case 1 ->
                                     String.format("%1$s : M%2$s | %3$s", n, frameItems.get(n).getFrameData().getValue().toString(), english && !pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameEnglish().isEmpty() ? pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameEnglish() : pmxFile.getMorphs().get((byte) frameItems.get(n).getFrameData().getValue()).getMorphNameJapanese());
@@ -259,7 +259,7 @@ public class DisplayTab {
 
                 ImGui.pushItemWidth(ImGui.calcItemWidth() / 6);
                 ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 5, 10);
-                
+
                 if (ImGui.button("T##2", buttonSize.x, buttonSize.y)) {
                     if (!frameItems.isEmpty()) {
                         PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
