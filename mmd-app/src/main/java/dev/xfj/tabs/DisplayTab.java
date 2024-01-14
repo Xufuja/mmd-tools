@@ -206,8 +206,17 @@ public class DisplayTab {
 
                 ImGui.text("Name");
                 ImGui.sameLine();
+
+                ImString buffer = english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish(), 512) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese(), 512);
                 ImGui.setNextItemWidth(ImGui.getContentRegionAvail().x - 85);
-                ImGui.inputText("##DisplaySelected", english && !displayItems.get(displayIndex).getDisplayFrameNameEnglish().isEmpty() ? new ImString(displayItems.get(displayIndex).getDisplayFrameNameEnglish()) : new ImString(displayItems.get(displayIndex).getDisplayFrameNameJapanese()), ImGuiInputTextFlags.ReadOnly);
+                if (ImGui.inputText("##DisplaySelected", buffer, ImGuiInputTextFlags.None)) {
+                    if (english) {
+                        displayItems.get(displayIndex).setDisplayFrameNameEnglish(String.valueOf(buffer));
+                    } else {
+                        displayItems.get(displayIndex).setDisplayFrameNameJapanese(String.valueOf(buffer));
+                    }
+                }
+
                 ImGui.sameLine();
 
                 if (ImGui.checkbox("English", english)) {
