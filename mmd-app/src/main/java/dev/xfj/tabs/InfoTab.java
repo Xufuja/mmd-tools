@@ -61,7 +61,15 @@ public class InfoTab {
                 ImGui.tableSetColumnIndex(1);
                 ImGui.setNextItemWidth(ImGui.getContentRegionAvail().x - 85);
                 String name = english ? pmxFile.getModelNameEnglish() : pmxFile.getModelNameJapanese();
-                ImGui.inputText("##Name", new ImString(name != null ? name : ""), ImGuiInputTextFlags.ReadOnly);
+                ImString buffer = name != null ? new ImString(name, 256) : new ImString("", 256);
+
+                if (ImGui.inputText("##Name", buffer)) {
+                    if (english) {
+                        pmxFile.setModelNameEnglish(String.valueOf(name));
+                    } else {
+                        pmxFile.setModelNameJapanese(String.valueOf(name));
+                    }
+                }
 
                 ImGui.sameLine();
 
