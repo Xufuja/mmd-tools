@@ -270,7 +270,7 @@ public class DisplayTab {
                 ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 5, 10);
 
                 if (ImGui.button("T##2", buttonSize.x, buttonSize.y)) {
-                    if (!frameItems.isEmpty()) {
+                    if (frameItems != null && !frameItems.isEmpty()) {
                         PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
                         frameItems.remove(frame);
                         frameItems.add(0, frame);
@@ -282,7 +282,7 @@ public class DisplayTab {
                 ImGui.sameLine();
 
                 if (ImGui.button("^##2", buttonSize.x, buttonSize.y)) {
-                    if (frameItems.size() > 1) {
+                    if (frameItems != null && frameItems.size() > 1) {
                         if (frameItemIndex - 1 > -1) {
                             Collections.swap(frameItems, frameItemIndex, frameItemIndex - 1);
                             frameItemIndex = frameItemIndex - 1;
@@ -294,7 +294,7 @@ public class DisplayTab {
                 ImGui.sameLine();
 
                 if (ImGui.button("v##2", buttonSize.x, buttonSize.y)) {
-                    if (frameItems.size() > 1) {
+                    if (frameItems != null && frameItems.size() > 1) {
                         if (frameItemIndex + 1 < frameItems.size()) {
                             Collections.swap(frameItems, frameItemIndex, frameItemIndex + 1);
                             frameItemIndex = frameItemIndex + 1;
@@ -306,7 +306,7 @@ public class DisplayTab {
                 ImGui.sameLine();
 
                 if (ImGui.button("B##2", buttonSize.x, buttonSize.y)) {
-                    if (!frameItems.isEmpty()) {
+                    if (frameItems != null && !frameItems.isEmpty()) {
                         PMXFileDisplayFrameData frame = frameItems.get(frameItemIndex);
                         frameItems.remove(frame);
                         frameItems.add(frame);
@@ -335,7 +335,7 @@ public class DisplayTab {
                 ImGui.endTable();
 
                 if (frameDeleted) {
-                    if (!frameItems.isEmpty()) {
+                    if (frameItems != null && !frameItems.isEmpty()) {
                         displayItems.get(displayIndex).setFrameCount(displayItems.get(displayIndex).getFrameCount() - 1);
                         displayItems.get(displayIndex).getFrames().remove(frameItemIndex);
                         frameItemIndex--;
@@ -347,13 +347,13 @@ public class DisplayTab {
                 }
 
                 if (displayDeleted) {
-                    if (!frameItems.isEmpty()) {
+                    if (frameItems != null && !frameItems.isEmpty()) {
                         displayItems.get(displayIndex).getFrames().removeAll(displayItems.get(displayIndex).getFrames());
                         displayItems.get(displayIndex).setFrameCount(0);
                     }
 
-                    pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrameCount() - 1);
                     pmxFile.getDisplayFrames().remove(displayIndex);
+                    pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrames().size());
                     displayIndex--;
 
                     if (displayIndex < 0) {

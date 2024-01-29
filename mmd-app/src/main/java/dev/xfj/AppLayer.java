@@ -5,7 +5,6 @@ import dev.xfj.events.Event;
 import dev.xfj.events.EventDispatcher;
 import dev.xfj.events.key.KeyPressedEvent;
 import dev.xfj.format.pmx.PMXFile;
-import dev.xfj.format.pmx.PMXFileDisplayFrame;
 import dev.xfj.input.Input;
 import dev.xfj.input.KeyCodes;
 import dev.xfj.parsing.PMXParser;
@@ -16,9 +15,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiTabBarFlags;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 public class AppLayer implements Layer {
 
@@ -66,7 +63,7 @@ public class AppLayer implements Layer {
             }
             if (ImGui.beginMenu("Edit")) {
                 if (ImGui.menuItem("Delete Empty Frames", "Ctrl+D")) {
-                    deleteEmptyFrame();
+                    deleteEmptyFrames();
                 }
 
                 ImGui.endMenu();
@@ -119,7 +116,7 @@ public class AppLayer implements Layer {
         }
     }
 
-    private void deleteEmptyFrame() {
+    private void deleteEmptyFrames() {
         if (pmxFile.getDisplayFrames() != null) {
             pmxFile.getDisplayFrames().removeIf(frame -> frame.getFrameCount() == 0);
             pmxFile.setDisplayFrameCount(pmxFile.getDisplayFrames().size());
@@ -149,7 +146,7 @@ public class AppLayer implements Layer {
             }
             case KeyCodes.D -> {
                 if (control) {
-                    deleteEmptyFrame();
+                    deleteEmptyFrames();
                     return true;
                 }
             }
