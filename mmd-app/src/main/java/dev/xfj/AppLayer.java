@@ -5,6 +5,7 @@ import dev.xfj.events.Event;
 import dev.xfj.events.EventDispatcher;
 import dev.xfj.events.key.KeyPressedEvent;
 import dev.xfj.format.pmx.PMXFile;
+import dev.xfj.format.pmx.PMXFileDisplayFrame;
 import dev.xfj.input.Input;
 import dev.xfj.input.KeyCodes;
 import dev.xfj.parsing.PMXParser;
@@ -66,6 +67,10 @@ public class AppLayer implements Layer {
                     deleteEmptyFrames();
                 }
 
+                if (ImGui.menuItem("Fix Root and Exp", "Ctrl+E")) {
+                    fixSpecialNames();
+                }
+
                 ImGui.endMenu();
             }
             ImGui.endMenuBar();
@@ -123,6 +128,23 @@ public class AppLayer implements Layer {
         }
     }
 
+    private void fixSpecialNames() {
+        if (pmxFile.getDisplayFrames() != null) {
+            pmxFile.getDisplayFrames().stream().filter(frame -> frame.getSpecialFlag() == (byte) 1).forEach(frame -> {
+                adjustName(frame, "Root", "Root");
+                adjustName(frame, "Exp", "表情");
+            });
+        }
+    }
+
+    private void adjustName(PMXFileDisplayFrame frame, String en, String jp) {
+        if (frame.getDisplayFrameNameEnglish().equals(en) && !frame.getDisplayFrameNameJapanese().equals(jp)) {
+            frame.setDisplayFrameNameJapanese(jp);
+        } else if (frame.getDisplayFrameNameJapanese().equals(jp) && !frame.getDisplayFrameNameEnglish().equals(en)) {
+            frame.setDisplayFrameNameEnglish(en);
+        }
+    }
+
     private boolean onKeyPressed(KeyPressedEvent event) {
         if (event.isRepeat()) {
             return false;
@@ -147,6 +169,12 @@ public class AppLayer implements Layer {
             case KeyCodes.D -> {
                 if (control) {
                     deleteEmptyFrames();
+                    return true;
+                }
+            }
+            case KeyCodes.E -> {
+                if (control) {
+                    fixSpecialNames();
                     return true;
                 }
             }
