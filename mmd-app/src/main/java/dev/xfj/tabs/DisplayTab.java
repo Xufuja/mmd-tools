@@ -82,7 +82,10 @@ public class DisplayTab {
 
                     ImGui.inputText("##Common", new ImString(String.valueOf(displayIndex)));
                     ImGui.tableSetColumnIndex(1);
-                    ImGui.inputText("##DisplayFrame", new ImString(displayItems.get(displayIndex).getSpecialFlag() == 1 ? "Special" : "Normal"), ImGuiInputTextFlags.ReadOnly);
+
+                    if (ImGui.checkbox("Delete Special?", specialDelete)) {
+                        specialDelete = !specialDelete;
+                    }
 
                     ImGui.sameLine(ImGui.getContentRegionAvail().x - 15);
                     ImGui.text(String.valueOf(pmxFile.getDisplayFrameCount()));
@@ -94,7 +97,9 @@ public class DisplayTab {
                     for (int n = 0; n < pmxFile.getDisplayFrameCount(); n++) {
                         boolean isSelected = (displayIndex == n);
 
-                        if (ImGui.selectable(displayItems.get(n).getDisplayFrameNameJapanese(), isSelected)) {
+                        String name = String.format("%1$s: %2$s", n, displayItems.get(n).getSpecialFlag() == 1 ? "[" + displayItems.get(n).getDisplayFrameNameJapanese() + "]" : displayItems.get(n).getDisplayFrameNameJapanese());
+
+                        if (ImGui.selectable(name, isSelected)) {
                             displayIndex = n;
 
                             if (isSelected) {
@@ -191,10 +196,6 @@ public class DisplayTab {
                 ImGui.popItemWidth();
 
                 ImGui.popStyleVar();
-
-                if (ImGui.checkbox("Allow special frame deletion", specialDelete)) {
-                    specialDelete = !specialDelete;
-                }
 
                 pmxFile.setDisplayFrames(displayItems);
 
