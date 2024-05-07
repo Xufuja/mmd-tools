@@ -8,11 +8,11 @@ import imgui.flag.ImGuiTableColumnFlags;
 import imgui.flag.ImGuiTableFlags;
 import imgui.type.ImString;
 
-public class InfoTab {
+public class ModelInfoTab {
     private final AppLayer layer;
     private boolean english;
 
-    public InfoTab(AppLayer layer) {
+    public ModelInfoTab(AppLayer layer) {
         this.layer = layer;
         this.english = false;
     }
@@ -21,7 +21,7 @@ public class InfoTab {
         PMXFile pmxFile = layer.getPmxFile();
         int tableFlags = ImGuiTableFlags.BordersOuter;
 
-        if (ImGui.beginTabItem("Info")) {
+        if (ImGui.beginTabItem("Model Info")) {
             ImGui.text("System");
 
             if (ImGui.beginTable("##System", 6, tableFlags)) {

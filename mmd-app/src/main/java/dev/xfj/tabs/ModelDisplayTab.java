@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DisplayTab {
+public class ModelDisplayTab {
     private final AppLayer layer;
     private boolean english;
     private boolean specialDelete;
@@ -25,7 +25,7 @@ public class DisplayTab {
     private int displayIndex = 0;
     private int frameItemIndex = 0;
 
-    public DisplayTab(AppLayer layer) {
+    public ModelDisplayTab(AppLayer layer) {
         this.layer = layer;
         this.english = false;
         this.specialDelete = false;
@@ -40,7 +40,7 @@ public class DisplayTab {
         boolean displayDeleted = false;
         boolean frameDeleted = false;
 
-        if (ImGui.beginTabItem("Display")) {
+        if (ImGui.beginTabItem("Model Display")) {
             if (ImGui.beginTable("##Display", 2, tableFlags)) {
                 ImGui.tableNextRow();
                 ImGui.tableSetColumnIndex(0);
